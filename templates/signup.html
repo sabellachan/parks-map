@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>Please register for an account.</h2>
+
+    <form action="/process-signup" id="signup" method="POST">
+      <label>First Name: <input type="text" name="first_name" placeholder="Jane"></label>
+      <label>Last Name: <input type="text" name="last_name" placeholder="Smith"></label>
+      <label>Email: <input type="email" name="email" placeholder="yourname@email.com"></label>
+      <label>Password: <input type="password" name="password" placeholder="yourpassword"></label>
+      <label>Zipcode: <input type="text" name="zipcode" placeholder="94301"></label>
+      <input type="submit" value="Register">
+    </form>
+
+{% endblock %}

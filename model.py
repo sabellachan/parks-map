@@ -42,8 +42,8 @@ class Visited_Park(db.Model):
         """Provide helpful representation when printed."""
 
         return '<Visited Parks visited_id={} rec_area_id={} user_id={}>'.format(self.visited_id,
-                                                                              self.rec_area_id,
-                                                                              self.user_id)
+                                                                                self.rec_area_id,
+                                                                                self.user_id)
 
 
 class Rec_Area(db.Model):

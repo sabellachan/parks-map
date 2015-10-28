@@ -100,5 +100,3 @@ if __name__ == "__main__":
     load_rec_areas()
     load_activities()
     load_park_activities()
-    # load_organizations()
-    # load_park_orgs()

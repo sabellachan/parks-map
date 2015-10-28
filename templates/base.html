@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <title>Parktake: Cause the Outdoors Await</title>
+</head>
+
+<body>
+  <h1>Parktake</h1>
+  <h2>Cause the Outdoors Await</h2>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <br>
+
+  {% block content %} put your content here {% endblock %}
+  <div id="footer">
+    {% block footer %}
+    <p id="data-source">Data source: <a href="https://ridb.recreation.gov">Recreation Information Database</a></p>
+    <p id="contact-info"><a href="mailto:#">Contact Us</a></p>
+    {% endblock %}
+  </div>
+</body>
+</html>
