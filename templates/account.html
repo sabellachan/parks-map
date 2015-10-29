@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>Your Account</h2>
+
+    First Name: {{ user.first_name }}
+    Last Name: {{ user.last_name }}
+    Email: {{ user.email }}
+    Zipcode: {{ user.zipcode }}
+
+{% endblock %}

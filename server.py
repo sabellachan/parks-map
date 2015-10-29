@@ -12,6 +12,7 @@ import datetime
 app = Flask(__name__)
 
 appkey = os.environ['appkey']
+mapkey = os.environ['mapkey']
 
 app.secret_key = appkey
 
@@ -82,19 +83,23 @@ def process_login():
 
     email = request.form.get('email')
     password = request.form.get('password')
-    hashed_password = hash_password(password)
 
     account = User.query.filter_by(email=email).first()
-    user_id = account.user_id
-    first_name = account.first_name
 
-    if check_password(hashed_password, account.password):
+    if check_password(account.password, password):
+        user_id = account.user_id
+        first_name = account.first_name
+
         flash('Welcome back, '+first_name+'!')
         session['user'] = user_id
-        return render_template('')
+        return render_template('landing.html', mapkey=mapkey)
     else:
         flash('That email and password combination does not exist.')
         return redirect('/login')
+
+
+#############################################################################
+# NICE TO HAVE: FORGOT PASSWORD
 
 
 #############################################################################
@@ -103,7 +108,23 @@ def process_login():
 
 @app.route('/account')
 def show_user_account():
-    pass
+    """Display user's account information."""
+
+    if 'user' in session:
+        logged_user = session.get('user')
+        print logged_user
+
+    # user = User.query.get(logged_user.user_id)
+    else:
+        flash('You are not logged in.')
+        return redirect('/login')
+
+    return render_template('account.html', user=logged_user)
+
+
+# @app.route('/update-account')
+# def update_user_account():
+#     pass
 
 
 #############################################################################
@@ -132,7 +153,7 @@ def process_logout():
     else:
         flash('You are not logged in.')
 
-    return render_template('homepage.html')
+    return render_template('index.html')
 
 
 #############################################################################
@@ -145,6 +166,7 @@ def hash_password(password):
 
 
 def check_password(hashed_password, user_password):
+
     password, salt = hashed_password.split(':')
     return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
 
