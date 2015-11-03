@@ -1,6 +1,6 @@
 from jinja2 import StrictUndefined
 
-from flask import Flask, render_template, redirect, request, flash, session
+from flask import Flask, render_template, redirect, request, flash, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import User, Visited_Park, Rec_Area, Activity, Park_Activity, connect_to_db, db
@@ -67,7 +67,7 @@ def process_signup():
 # LOGIN
 
 
-@app.route('/login')
+@app.route('/login', methods=["POST"])
 def show_login():
     """Show login page."""
 
@@ -110,16 +110,17 @@ def process_login():
 def show_user_account():
     """Display user's account information."""
 
-    if 'user' in session:
-        logged_user = session.get('user')
-        print logged_user
+    pass
+    # if 'user' in session:
+    #     logged_user = session.get('user')
+    #     print logged_user
 
-    # user = User.query.get(logged_user.user_id)
-    else:
-        flash('You are not logged in.')
-        return redirect('/login')
+    # # user = User.query.get(logged_user.user_id)
+    # else:
+    #     flash('You are not logged in.')
+    #     return redirect('/login')
 
-    return render_template('account.html', user=logged_user)
+    # return render_template('account.html', user=logged_user)
 
 
 # @app.route('/update-account')
@@ -131,19 +132,61 @@ def show_user_account():
 # SEARCH
 
 
-#############################################################################
-# ADD TO VISITED PARKS
+@app.route('/parks.json')
+def park_info():
+    """JSON information about each park."""
+
+    # park =
+    #        {'recAreaName': 'Lake Estes',
+    #         'recAreaDescription': 'Lake Estes, a feature of the <A HREF="http://www.usbr.gov/projects/Project.jsp?proj_Name=Colorado-Big+Thompson+Project">Colorado-Big Thompson Project</A>, is formed by <A HREF="http://www.usbr.gov/projects/Facility.jsp?fac_Name=Olympus+Dam">Olympus Dam</A> constructed across the Big Thompson River.  The afterbay storage in Lake Estes and the forebay storage in Marys Lake enable the Estes powerplant to meet daily variations in energy demand.  Recreation facilities include a nine-hole golf course, five picnic and associated day-use areas, and a marina. Good access to recreation areas. The reservoir has approximately 185 water surface acres, 213 land acres and 4 milesof shoreline. Power boating is limited, but available. Sailing opportunities. Fish species available are largely rainbow trout. Facilities are closed in winter due to ice and snow.',
+    #         'recAreaLat': '40.37578',
+    #         'recAreaLong': park.longitude,
+    #         'recAreaPhoneNumber': park.contact_phone,
+    #         'recAreaReservation': park.reservation_url}
+
+    parks = Rec_Area.query.all()
+
+    list_of_parks = []
+
+    for park in parks:
+
+        park = {'recAreaName': park.rec_area_name,
+                'recAreaDescription': park.description,
+                'recAreaLat': park.latitude,
+                'recAreaLong': park.longitude,
+                'recAreaPhoneNumber': park.contact_phone,
+                'recAreaReservation': park.reservation_url}
+
+        list_of_parks.append(park)
+
+    park_dict = {'parks': list_of_parks}
+
+    return jsonify(park_dict)
 
 
 #############################################################################
-# SHOW VISITED PARKS
+# ADD VISITED PARKS
+
+
+@app.route('/add-park')
+def add_visited_parks():
+    pass
+
+
+#############################################################################
+# VIEW VISITED PARKS
+
+
+@app.route('/view-park')
+def view_visited_parks():
+    pass
 
 
 #############################################################################
 # LOGOUT
 
 
-@app.route('/logout')
+@app.route('/logout', methods=["POST"])
 def process_logout():
     """Remove user from session"""
 
