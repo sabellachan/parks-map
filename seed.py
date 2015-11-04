@@ -23,9 +23,7 @@ def load_rec_areas():
 
     for row in data:
     # row is a list
-        description, rec_area_id, latitude, longitude, rec_area_name, contact_phone, reservation_url = row
-
-        description.decode('utf-8')
+        description, rec_area_id, latitude, longitude, rec_area_name, contact_phone = row
 
         try:
             latitude = float(latitude)
@@ -40,8 +38,7 @@ def load_rec_areas():
                             description=description,
                             latitude=latitude,
                             longitude=longitude,
-                            contact_phone=contact_phone,
-                            reservation_url=reservation_url)
+                            contact_phone=contact_phone)
 
         db.session.add(rec_area)
 

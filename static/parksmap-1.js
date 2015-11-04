@@ -1,17 +1,21 @@
 function initMap() {
 
-  var myLatLng = {lat: 38.705, lng: -121.169};
+  var startLatLng = new google.maps.LatLng(38.705, -121.169);
+
+  var bounds = new google.maps.LatLngBounds();
 
   // Create a map object and specify the DOM element for display.
   var map = new google.maps.Map(document.getElementById('map'), {
-    center: myLatLng,
+    center: startLatLng,
+    bounds: bounds,
     scrollwheel: false,
     zoom: 7,
-    zoomControl: false,
+    zoomControl: true,
     panControl: false,
     streetViewControl: false,
     mapTypeId: google.maps.MapTypeId.TERRAIN
   });
+
 
   // Try HTML5 geolocation.
   if (navigator.geolocation) {
@@ -23,12 +27,14 @@ function initMap() {
 
       map.setCenter(pos);
     }, function() {
-      handleLocationError(true, infoWindow, map.getBounds());
+      handleLocationError(true, infoWindow, getBounds());
     });
   } else {
     // Browser doesn't support Geolocation
-    handleLocationError(false, infoWindow, map.getBounds());
+    handleLocationError(false, infoWindow, getBounds());
   }
+
+  google.maps.event.addListener(map, 'bounds_changed', getParksInfo);
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   infoWindow.setPosition(pos);
@@ -38,43 +44,48 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
 }
 
   var infoWindow = new google.maps.InfoWindow({
-      width: 200
+      width: 150
   });
 
-  google.maps.event.bounds_changed;
-
+function getParksInfo() {
   // Retrieving the information with AJAX
-  $.get('/parks.json', function (parks) {
+    $.get('/parks.json', function (parks) {
 
-      var parks_array = parks.parks;
+        var parksArray = parks.parks;
 
-      var park, marker, html;
+        var park, marker, html;
 
-      for (var i = 0; i < parks_array.length; i++) {
-          park = parks_array[i];
+        for (var i = 0; i < parksArray.length; i++) {
+            park = parksArray[i];
 
-          // Define the marker
-          marker = new google.maps.Marker({
-              position: new google.maps.LatLng(park.recAreaLat, park.recAreaLong),
-              map: map,
-              title: 'Rec Area ' + park.recAreaName,
-          });
+            // Define the marker
+            marker = new google.maps.Marker({
+                position: new google.maps.LatLng(park.recAreaLat, park.recAreaLong),
+                map: map,
+                draggable: false,
+                title: 'Rec Area ' + park.recAreaName,
+            });
 
-          // Define the content of the infoWindow
-          html = (
-              '<div class="window-content">' +
-                  '<p><b>Name: </b>' + park.recAreaName + '</p>' +
-                  '<p><b>Description: </b>' + park.recAreaDescription + '</p>' +
-                  '<p><b>Phone Number: </b>' + park.recAreaPhoneNumber + '</p>' +
-                  '<p><b>Reservation URL: </b>' + park.recAreaReservation + '</p>' +
-              '</div>');
+            // Define the content of the infoWindow
+            html = (
+                '<div class="window-content">' +
+                    '<p><b>ID: </b>' + park.recAreaID + '</p>' +
+                    '<p><b>Name: </b>' + park.recAreaName + '</p>' +
+                    '<p><b>Description: </b>' + park.recAreaDescription + '</p>' +
+                    '<p><b>Phone Number: </b>' + park.recAreaPhoneNumber + '</p>' +
+                    '<form action=\'/add-park\' method=\'POST\'>' +
+                    '<input type="hidden" name="park-name" value="'+ park.recAreaID +'">' +
+                    '<input type="submit" id="visited-park" value="I\'ve visited this park">' +
+                    '</form>' +
+                '</div>');
 
-          bindInfoWindow(marker, map, infoWindow, html);
-      }
+            bindInfoWindow(marker, map, infoWindow, html);
+        }
 
-  });
+    });
+}
 
-  function bindInfoWindow(marker, map, infoWindow, html) {
+  function bindInfoWindow(marker, map, infoWindow, html, recAreaID, userID) {
       google.maps.event.addListener(marker, 'click', function () {
           infoWindow.close();
           infoWindow.setContent(html);

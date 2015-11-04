@@ -3,15 +3,20 @@
 {% block content %}
 
 <form action="/" method="GET">
-    Search for a park <input type="search" name="park-search" placeholder="Yosemite National Park">
+    <input type="text" name="park-search" placeholder="Yosemite National Park">
     <input type="submit" value="Search">
 </form>
     <br>
 
       <div id="map"></div>
 
-      <script src="https://maps.googleapis.com/maps/api/js?key={{ mapkey }}"></script>
+      <script src="https://maps.googleapis.com/maps/api/js?key={{ mapkey }}&libraries=places"></script>
       <script src="https://code.jquery.com/jquery.js"></script>
       <script src="/static/parksmap-1.js"></script>
+
+<form action="/add-park" method="POST">
+    <input type="hidden" name="recAreaID" id="rec-area-id">
+    <input type="hidden" name="userID" id="user-id" value="{{ session.user }}">
+</form>
 
 {% endblock %}

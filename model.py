@@ -57,7 +57,6 @@ class Rec_Area(db.Model):
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
     contact_phone = db.Column(db.String(15), nullable=True)
-    reservation_url = db.Column(db.String(60), nullable=True)
 
     def __repr__(self):
         """Provide helpful representation when printed."""

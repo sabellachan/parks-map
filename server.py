@@ -31,7 +31,7 @@ def show_index():
 # SIGNUP
 
 
-@app.route('/signup')
+@app.route('/signup', methods=["POST"])
 def show_signup():
     """Show sign-up form."""
 
@@ -103,7 +103,7 @@ def process_login():
 
 
 #############################################################################
-# ACCOUNT/USER INFORMATION
+# ACCOUNT/USER INFORMATION - PHASE 2
 
 
 @app.route('/account')
@@ -136,26 +136,18 @@ def show_user_account():
 def park_info():
     """JSON information about each park."""
 
-    # park =
-    #        {'recAreaName': 'Lake Estes',
-    #         'recAreaDescription': 'Lake Estes, a feature of the <A HREF="http://www.usbr.gov/projects/Project.jsp?proj_Name=Colorado-Big+Thompson+Project">Colorado-Big Thompson Project</A>, is formed by <A HREF="http://www.usbr.gov/projects/Facility.jsp?fac_Name=Olympus+Dam">Olympus Dam</A> constructed across the Big Thompson River.  The afterbay storage in Lake Estes and the forebay storage in Marys Lake enable the Estes powerplant to meet daily variations in energy demand.  Recreation facilities include a nine-hole golf course, five picnic and associated day-use areas, and a marina. Good access to recreation areas. The reservoir has approximately 185 water surface acres, 213 land acres and 4 milesof shoreline. Power boating is limited, but available. Sailing opportunities. Fish species available are largely rainbow trout. Facilities are closed in winter due to ice and snow.',
-    #         'recAreaLat': '40.37578',
-    #         'recAreaLong': park.longitude,
-    #         'recAreaPhoneNumber': park.contact_phone,
-    #         'recAreaReservation': park.reservation_url}
-
     parks = Rec_Area.query.all()
 
     list_of_parks = []
 
     for park in parks:
 
-        park = {'recAreaName': park.rec_area_name,
+        park = {'recAreaID': park.rec_area_id,
+                'recAreaName': park.rec_area_name,
                 'recAreaDescription': park.description,
                 'recAreaLat': park.latitude,
                 'recAreaLong': park.longitude,
-                'recAreaPhoneNumber': park.contact_phone,
-                'recAreaReservation': park.reservation_url}
+                'recAreaPhoneNumber': park.contact_phone}
 
         list_of_parks.append(park)
 
@@ -164,13 +156,46 @@ def park_info():
     return jsonify(park_dict)
 
 
+# @app.route('/search-parks.json')
+# def search_park_info():
+#     """Route for search bar. PHASE 2"""
+#     pass
+
+
 #############################################################################
 # ADD VISITED PARKS
 
 
-@app.route('/add-park')
+@app.route('/add-park', methods=["POST"])
 def add_visited_parks():
-    pass
+    """Add park to Visited_Park table for session user."""
+
+    if 'user' in session:
+        rec_area_id = request.form.get('park-name')
+        user_id = session['user']
+
+        visited = Visited_Park(rec_area_id=rec_area_id, user_id=user_id)
+
+        # visited_parks = Visited_Park.query.filter_by(user_id=user_id, rec_area_id=rec_area_id).all()
+
+        # if visited_parks is None:
+
+        db.session.add(visited)
+        db.session.commit()
+        flash('Park successfully added.')
+
+        # else:
+        #     visited = Visited_Park(rec_area_id=rec_area_id, user_id=user_id)
+        #     db.session.expunge(visited)
+        #     db.session.commit()
+        #     flash('Park successfully removed.')
+
+        return render_template('landing.html', mapkey=mapkey)
+
+    # else:
+    #     flash('You are not logged in.')
+
+    #     return render_template('index.html')
 
 
 #############################################################################
