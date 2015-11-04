@@ -136,15 +136,21 @@ def show_user_account():
 def park_info():
     """JSON information about each park."""
 
-    parks = Rec_Area.query.all()
+    parks = db.session.query(Rec_Area).all()
 
     list_of_parks = []
 
     for park in parks:
 
+        # SQL query to find what activities are in each park:
+        # SELECT activity_name FROM Activities JOIN Park_Activities ON Activities.activity_id = Park_Activities.activity_id WHERE rec_area_id=park.rec_area_id;
+        activities_query = db.session.query(Activity.activity_name).join(Park_Activity).filter(Park_Activity.rec_area_id == str(park.rec_area_id))
+        list_of_activities = activities_query.all()
+
         park = {'recAreaID': park.rec_area_id,
                 'recAreaName': park.rec_area_name,
                 'recAreaDescription': park.description,
+                'recAreaActivities': list_of_activities,
                 'recAreaLat': park.latitude,
                 'recAreaLong': park.longitude,
                 'recAreaPhoneNumber': park.contact_phone}

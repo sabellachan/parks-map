@@ -72,6 +72,7 @@ function getParksInfo() {
                     '<p><b>ID: </b>' + park.recAreaID + '</p>' +
                     '<p><b>Name: </b>' + park.recAreaName + '</p>' +
                     '<p><b>Description: </b>' + park.recAreaDescription + '</p>' +
+                    '<p><b>Activities: </b>' + park.recAreaActivities + '</p>' +
                     '<p><b>Phone Number: </b>' + park.recAreaPhoneNumber + '</p>' +
                     '<form action=\'/add-park\' method=\'POST\'>' +
                     '<input type="hidden" name="park-name" value="'+ park.recAreaID +'">' +
