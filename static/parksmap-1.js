@@ -2,12 +2,9 @@ function initMap() {
 
   var startLatLng = new google.maps.LatLng(38.705, -121.169);
 
-  var bounds = new google.maps.LatLngBounds();
-
   // Create a map object and specify the DOM element for display.
   var map = new google.maps.Map(document.getElementById('map'), {
     center: startLatLng,
-    bounds: bounds,
     scrollwheel: false,
     zoom: 7,
     zoomControl: true,
@@ -47,6 +44,23 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
       width: 150
   });
 
+  // Set the default bounds for the autocomplete search results.
+  // This will bias the search results to North America.
+  var defaultBounds = new google.maps.LatLngBounds(
+    new google.maps.LatLng(27, 133),
+    new google.maps.LatLng(72, 40));
+
+  var options = {
+    bounds: defaultBounds
+  };
+
+  // Get the HTML input element for the autocomplete search box.
+  var input = document.getElementById('search');
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+  // Create the autocomplete object.
+  var autocomplete = new google.maps.places.Autocomplete(input, options);
+
 function getParksInfo() {
   // Retrieving the information with AJAX
     $.get('/parks.json', function (parks) {
@@ -74,9 +88,9 @@ function getParksInfo() {
                     '<p><b>Description: </b>' + park.recAreaDescription + '</p>' +
                     '<p><b>Activities: </b>' + park.recAreaActivities + '</p>' +
                     '<p><b>Phone Number: </b>' + park.recAreaPhoneNumber + '</p>' +
-                    '<form action=\'/add-park\' method=\'POST\'>' +
-                    '<input type="hidden" name="park-name" value="'+ park.recAreaID +'">' +
-                    '<input type="submit" id="visited-park" value="I\'ve visited this park">' +
+                    '<form id="visited-park" action=\'/add-park\' method=\'POST\'>' +
+                    '<input type="hidden" name="park-name" id="park-id" value="'+ park.recAreaID +'">' +
+                    '<input type="submit" value="I\'ve visited this park">' +
                     '</form>' +
                 '</div>');
 
@@ -90,9 +104,21 @@ function getParksInfo() {
       google.maps.event.addListener(marker, 'click', function () {
           infoWindow.close();
           infoWindow.setContent(html);
+
           infoWindow.open(map, marker);
       });
   }
+  google.maps.event.addListener(infoWindow, 'domready', function() {
+              $("#visited-park").on("submit", function(evt) {
+                  evt.preventDefault();
+                  console.log("hi!");
+                    $.post('/add-park', {"park-id": $('#park-id').val()}, function(msg){
+                      console.log(msg);
+                    });
+              });  // on submit
+  }); // bind listener after infoWindow exists
+
 }
 
 google.maps.event.addDomListener(window, 'load', initMap);
+

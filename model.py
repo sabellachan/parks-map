@@ -38,6 +38,24 @@ class Visited_Park(db.Model):
     rec_area_id = db.Column(db.Integer, db.ForeignKey('rec_areas.rec_area_id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
 
+    def add_to_db(self):
+        """Check to see if user has visited this park before."""
+
+        if_visited = Visited_Park.query.filter(Visited_Park.user_id==self.user_id, Visited_Park.rec_area_id==self.rec_area_id).all()
+        print "IF VISITED IN DB FOR USER:", if_visited
+        # check to see if user has not visited this park
+        # if user has not added this park, add it to the database
+        if len(if_visited) == 0:
+            print self.rec_area_id
+            # visited = Visited_Park(rec_area_id=self.rec_area_id, user_id=self.user_id)
+            # print visited
+            db.session.add(self)
+            db.session.commit()
+            return "Park Added"
+        # if user has already added this park, let them know
+        else:
+            return "You have already added this park."
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 

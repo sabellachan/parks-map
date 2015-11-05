@@ -142,8 +142,6 @@ def park_info():
 
     for park in parks:
 
-        # SQL query to find what activities are in each park:
-        # SELECT activity_name FROM Activities JOIN Park_Activities ON Activities.activity_id = Park_Activities.activity_id WHERE rec_area_id=park.rec_area_id;
         activities_query = db.session.query(Activity.activity_name).join(Park_Activity).filter(Park_Activity.rec_area_id == str(park.rec_area_id))
         list_of_activities = activities_query.all()
 
@@ -177,18 +175,19 @@ def add_visited_parks():
     """Add park to Visited_Park table for session user."""
 
     if 'user' in session:
-        rec_area_id = request.form.get('park-name')
+        rec_area_id = request.form.get('park-id')
         user_id = session['user']
 
         visited = Visited_Park(rec_area_id=rec_area_id, user_id=user_id)
+
+        message = visited.add_to_db()
 
         # visited_parks = Visited_Park.query.filter_by(user_id=user_id, rec_area_id=rec_area_id).all()
 
         # if visited_parks is None:
 
-        db.session.add(visited)
-        db.session.commit()
-        flash('Park successfully added.')
+        # db.session.add(visited)
+        # db.session.commit()
 
         # else:
         #     visited = Visited_Park(rec_area_id=rec_area_id, user_id=user_id)
@@ -196,7 +195,7 @@ def add_visited_parks():
         #     db.session.commit()
         #     flash('Park successfully removed.')
 
-        return render_template('landing.html', mapkey=mapkey)
+    return message
 
     # else:
     #     flash('You are not logged in.')
