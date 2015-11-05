@@ -1,3 +1,5 @@
+var markersArray = [];
+
 function initMap() {
 
   var startLatLng = new google.maps.LatLng(38.705, -121.169);
@@ -62,6 +64,13 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   var autocomplete = new google.maps.places.Autocomplete(input, options);
 
 function getParksInfo() {
+  // // remove any old markers
+  //   for (var i=0; i < markersArray.length; i++){
+  //     markersArray[i].setMap(null);
+  //   }
+  //   markersArray.length = 0;
+
+
   // Retrieving the information with AJAX
     $.get('/parks.json', function (parks) {
 
@@ -94,13 +103,15 @@ function getParksInfo() {
                     '</form>' +
                 '</div>');
 
+
+            // markersArray.push(marker);
             bindInfoWindow(marker, map, infoWindow, html);
         }
 
     });
 }
 
-  function bindInfoWindow(marker, map, infoWindow, html, recAreaID, userID) {
+  function bindInfoWindow(marker, map, infoWindow, html) {
       google.maps.event.addListener(marker, 'click', function () {
           infoWindow.close();
           infoWindow.setContent(html);
