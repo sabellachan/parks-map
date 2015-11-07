@@ -33,8 +33,6 @@ function initMap() {
     handleLocationError(false, infoWindow, getBounds());
   }
 
-  google.maps.event.addListener(map, 'bounds_changed', getParksInfo);
-
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   infoWindow.setPosition(pos);
   infoWindow.setContent(browserHasGeolocation ?
@@ -46,24 +44,20 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
       width: 150
   });
 
-  // Set the default bounds for the autocomplete search results.
-  // This will bias the search results to North America.
-  var defaultBounds = new google.maps.LatLngBounds(
-    new google.maps.LatLng(27, 133),
-    new google.maps.LatLng(72, 40));
-
-  var options = {
-    bounds: defaultBounds
-  };
-
   // Get the HTML input element for the autocomplete search box.
   var input = document.getElementById('search');
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
   // Create the autocomplete object.
-  var autocomplete = new google.maps.places.Autocomplete(input, options);
+  var autocomplete = new google.maps.places.Autocomplete(input);
 
-function getParksInfo() {
+  google.maps.event.addListener(autocomplete, 'place_changed', function() {
+    var place = autocomplete.getPlace();
+    if (place.geometry) {
+       map.panTo(place.geometry.location);
+       map.setZoom(8);
+    }
+  });
   // // remove any old markers
   //   for (var i=0; i < markersArray.length; i++){
   //     markersArray[i].setMap(null);
@@ -109,7 +103,6 @@ function getParksInfo() {
         }
 
     });
-}
 
   function bindInfoWindow(marker, map, infoWindow, html) {
       google.maps.event.addListener(marker, 'click', function () {

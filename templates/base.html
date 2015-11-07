@@ -27,11 +27,10 @@
   <h2>Cause the Outdoors Await</h2>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <ul class=flashes>
+            <p class=flashes>
                 {% for message in messages %}
-                    <li>{{ message }}</li>
+                    <p>{{ message }}</p>
                 {% endfor %}
-            </ul>
         {% endif %}
     {% endwith %}
     <br>
