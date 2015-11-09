@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>Your Parks</h2>
+    <div class="visited">
+        {% for park in parks %}
+
+            <p>{{ park.rec_area_name }}</p>
+
+        {% endfor %}
+    </div>
+
+{% endblock %}

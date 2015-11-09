@@ -42,7 +42,6 @@ class Visited_Park(db.Model):
         """Check to see if user has visited this park before."""
 
         if_visited = Visited_Park.query.filter(Visited_Park.user_id == self.user_id, Visited_Park.rec_area_id == self.rec_area_id).all()
-        print "IF VISITED IN DB FOR USER:", if_visited
         # check to see if user has not visited this park
         # if user has not added this park, add it to the database
         if len(if_visited) == 0:
@@ -50,9 +49,13 @@ class Visited_Park(db.Model):
             db.session.add(self)
             db.session.commit()
             return "Park Added"
-        # if user has already added this park, let them know
+        # if user has already added this park, remove it from database
         else:
-            return "You have already added this park."
+            print self.rec_area_id
+            visited = db.session.query(Visited_Park).filter(Visited_Park.user_id == self.user_id, Visited_Park.rec_area_id == self.rec_area_id).first()
+            db.session.delete(visited)
+            db.session.commit()
+            return "Park Removed"
 
     def __repr__(self):
         """Provide helpful representation when printed."""

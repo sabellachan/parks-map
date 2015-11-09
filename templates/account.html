@@ -2,10 +2,11 @@
 {% block content %}
 
     <h2>Your Account</h2>
-
-    First Name: {{ user.first_name }}
-    Last Name: {{ user.last_name }}
-    Email: {{ user.email }}
-    Zipcode: {{ user.zipcode }}
+    <div class="account-info">
+        <p>First Name: {{ user.first_name }}</p>
+        <p>Last Name: {{ user.last_name }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Zipcode: {{ user.zipcode }}</p>
+    </div>
 
 {% endblock %}

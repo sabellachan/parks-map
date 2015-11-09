@@ -1,6 +1,6 @@
 from jinja2 import StrictUndefined
 
-from flask import Flask, render_template, redirect, request, flash, session, jsonify
+from flask import Flask, render_template, redirect, request, flash, session, jsonify, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import User, Visited_Park, Rec_Area, Activity, Park_Activity, connect_to_db, db
@@ -67,7 +67,7 @@ def process_signup():
 # LOGIN
 
 
-@app.route('/login', methods=["POST"])
+@app.route('/login', methods=["GET", "POST"])
 def show_login():
     """Show login page."""
 
@@ -77,7 +77,7 @@ def show_login():
     return render_template('login.html')
 
 
-@app.route('/process-login', methods=["POST"])
+@app.route('/process-login', methods=["GET", "POST"])
 def process_login():
     """Process login form. Check to see if email and password combination exist in database."""
 
@@ -98,45 +98,51 @@ def process_login():
         return redirect('/login')
 
 
+@app.route('/landing')
+def show_landing_page():
+    """Show landing page from links other than login."""
+
+    return render_template('landing.html', mapkey=mapkey)
+
+
 #############################################################################
 # NICE TO HAVE: FORGOT PASSWORD
 
 
 #############################################################################
-# ACCOUNT/USER INFORMATION - PHASE 2
+# ACCOUNT/USER INFORMATION
 
 
 @app.route('/account')
 def show_user_account():
     """Display user's account information."""
 
-    pass
-    # if 'user' in session:
-    #     logged_user = session.get('user')
-    #     print logged_user
+    if 'user' in session:
+        logged_user = session['user']
+        user = User.query.get(logged_user)
+        return render_template('account.html', user=user)
 
-    # # user = User.query.get(logged_user.user_id)
-    # else:
-    #     flash('You are not logged in.')
-    #     return redirect('/login')
-
-    # return render_template('account.html', user=logged_user)
+    else:
+        flash('You are not logged in.')
+        return redirect('/login')
 
 
+# NICE TO HAVE
 # @app.route('/update-account')
 # def update_user_account():
 #     pass
 
 
 #############################################################################
-# SEARCH
+# RETRIEVE PARKS INFORMATION
 
 
 @app.route('/parks.json')
 def park_info():
-    """JSON information about each park."""
+    """JSON information about each unvisited park."""
 
-    parks = db.session.query(Rec_Area).all()
+    subquery = db.session.query(Visited_Park.rec_area_id)
+    parks = db.session.query(Rec_Area).filter(Rec_Area.rec_area_id.notin_(subquery)).all()
 
     list_of_parks = []
 
@@ -160,10 +166,34 @@ def park_info():
     return jsonify(park_dict)
 
 
-# @app.route('/search-parks.json')
-# def search_park_info():
-#     """Route for search bar. PHASE 2"""
-#     pass
+@app.route('/parks-visited.json')
+def visited_park_info():
+    """JSON information about each visited park."""
+
+    user_id = session['user']
+
+    visited_parks = db.session.query(Rec_Area).join(Visited_Park).filter(Visited_Park.user_id == user_id).all()
+
+    list_of_visited = []
+
+    for visited_park in visited_parks:
+
+        activities_query = db.session.query(Activity.activity_name).join(Park_Activity).filter(Park_Activity.rec_area_id == str(visited_park.rec_area_id))
+        list_of_activities = activities_query.all()
+
+        visited_park = {'recAreaID': visited_park.rec_area_id,
+                        'recAreaName': visited_park.rec_area_name,
+                        'recAreaDescription': visited_park.description,
+                        'recAreaActivities': list_of_activities,
+                        'recAreaLat': visited_park.latitude,
+                        'recAreaLong': visited_park.longitude,
+                        'recAreaPhoneNumber': visited_park.contact_phone}
+
+        list_of_visited.append(visited_park)
+
+    visited_dict = {'parks': list_of_visited}
+
+    return jsonify(visited_dict)
 
 
 #############################################################################
@@ -182,25 +212,11 @@ def add_visited_parks():
 
         message = visited.add_to_db()
 
-        # visited_parks = Visited_Park.query.filter_by(user_id=user_id, rec_area_id=rec_area_id).all()
-
-        # if visited_parks is None:
-
-        # db.session.add(visited)
-        # db.session.commit()
-
-        # else:
-        #     visited = Visited_Park(rec_area_id=rec_area_id, user_id=user_id)
-        #     db.session.expunge(visited)
-        #     db.session.commit()
-        #     flash('Park successfully removed.')
+    else:
+        flash('You are not logged in.')
+        return render_template('index.html')
 
     return message
-
-    # else:
-    #     flash('You are not logged in.')
-
-    #     return render_template('index.html')
 
 
 #############################################################################
@@ -209,7 +225,17 @@ def add_visited_parks():
 
 @app.route('/view-park')
 def view_visited_parks():
-    pass
+    """Show parks user has visited."""
+
+    if 'user' in session:
+        user_id = session['user']
+        # visited_parks is a list
+        visited_parks = db.session.query(Rec_Area).join(Visited_Park).filter(Visited_Park.user_id == user_id).all()
+
+        return render_template('visited.html', parks=visited_parks)
+    else:
+        flash('You are not logged in.')
+        return render_template('index.html')
 
 
 #############################################################################

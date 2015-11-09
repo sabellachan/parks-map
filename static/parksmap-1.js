@@ -1,5 +1,8 @@
 var markersArray = [];
 
+var parkIcon = 'static/img/tree-yellowicon.png';
+var visitedIcon = 'static/img/tree-greenicon.png';
+
 function initMap() {
 
   var startLatLng = new google.maps.LatLng(38.705, -121.169);
@@ -12,6 +15,92 @@ function initMap() {
     zoomControl: true,
     panControl: false,
     streetViewControl: false,
+    styles: [
+      {"stylers": [
+          {"hue": "#bbff00"},
+          {"weight": 0.5},
+          {"gamma": 0.5}
+        ]
+      },
+      {"elementType": "labels",
+       "stylers": [
+          {"visibility": "off"}
+        ]
+      },
+      {"featureType": "landscape.natural",
+       "stylers": [
+          {"color": "#a4cc48"}
+        ]
+      },
+      {"featureType": "road",
+       "elementType": "geometry",
+       "stylers": [
+          {"color": "#ffffff"},
+          {"visibility": "on"},
+          {"weight": 1}
+        ]
+      },
+      {"featureType": "administrative",
+       "elementType": "labels",
+       "stylers": [
+          {"visibility": "on"}
+        ]
+      },
+      {"featureType": "road.highway",
+       "elementType": "labels",
+       "stylers": [
+          {"visibility": "simplified"},
+          {"gamma": 1.14},
+          {"saturation": -18}
+        ]
+      },
+      {"featureType": "road.highway.controlled_access",
+       "elementType": "labels",
+       "stylers": [
+          {"saturation": 30},
+          {"gamma": 0.76}
+        ]
+      },
+      {"featureType": "road.local",
+       "stylers": [
+          {"visibility": "simplified"},
+          {"weight": 0.4},
+          {"lightness": -8}
+        ]
+      },
+      {"featureType": "water",
+       "stylers": [
+          {"color": "#4aaecc"}
+        ]
+      },
+      {"featureType": "landscape.man_made",
+       "stylers": [
+          {"color": "#718e32"}
+        ]
+      },
+      {"featureType": "poi.business",
+       "stylers": [
+          {"saturation": 68},
+          {"lightness": -61}
+        ]
+      },
+      {"featureType": "administrative.locality",
+       "elementType": "labels.text.stroke",
+       "stylers": [
+          {"weight": 2.7},
+          {"color": "#f4f9e8"}
+        ]
+      },
+      {"featureType": "road.highway.controlled_access",
+       "elementType": "geometry.stroke",
+       "stylers": [
+          {"weight": 1.5},
+          {"color": "#e53013"},
+          {"saturation": -42},
+          {"lightness": 28}
+        ]
+      }
+    ],
     mapTypeId: google.maps.MapTypeId.TERRAIN
   });
 
@@ -58,12 +147,6 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
        map.setZoom(8);
     }
   });
-  // // remove any old markers
-  //   for (var i=0; i < markersArray.length; i++){
-  //     markersArray[i].setMap(null);
-  //   }
-  //   markersArray.length = 0;
-
 
   // Retrieving the information with AJAX
     $.get('/parks.json', function (parks) {
@@ -79,6 +162,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
             marker = new google.maps.Marker({
                 position: new google.maps.LatLng(park.recAreaLat, park.recAreaLong),
                 map: map,
+                icon: parkIcon,
                 draggable: false,
                 title: 'Rec Area ' + park.recAreaName,
             });
@@ -93,7 +177,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
                     '<p><b>Phone Number: </b>' + park.recAreaPhoneNumber + '</p>' +
                     '<form id="visited-park" action=\'/add-park\' method=\'POST\'>' +
                     '<input type="hidden" name="park-name" id="park-id" value="'+ park.recAreaID +'">' +
-                    '<input type="submit" value="I\'ve visited this park">' +
+                    '<input type="submit" value="I\'ve visited this park">' + '<p><div id="msg"></div></p>' +
                     '</form>' +
                 '</div>');
 
@@ -103,6 +187,45 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
         }
 
     });
+
+   $.get('/parks-visited.json', function (parks) {
+
+      var parksArray = parks.parks;
+
+      var park, marker, html;
+
+      for (var i = 0; i < parksArray.length; i++) {
+          park = parksArray[i];
+
+          // Define the marker
+          marker = new google.maps.Marker({
+              position: new google.maps.LatLng(park.recAreaLat, park.recAreaLong),
+              map: map,
+              icon: visitedIcon,
+              draggable: false,
+              title: 'Rec Area ' + park.recAreaName,
+          });
+
+          // Define the content of the infoWindow
+          html = (
+              '<div class="window-content">' +
+                  '<p><b>ID: </b>' + park.recAreaID + '</p>' +
+                  '<p><b>Name: </b>' + park.recAreaName + '</p>' +
+                  '<p><b>Description: </b>' + park.recAreaDescription + '</p>' +
+                  '<p><b>Activities: </b>' + park.recAreaActivities + '</p>' +
+                  '<p><b>Phone Number: </b>' + park.recAreaPhoneNumber + '</p>' +
+                  '<form id="visited-park" action=\'/add-park\' method=\'POST\'>' +
+                  '<input type="hidden" name="park-name" id="park-id" value="'+ park.recAreaID +'">' +
+                  '<input type="submit" value="I\'ve visited this park"><div id="msg"></div>' +
+                  '</form>' +
+              '</div>');
+
+
+          // markersArray.push(marker);
+          bindInfoWindow(marker, map, infoWindow, html);
+      }
+
+  });
 
   function bindInfoWindow(marker, map, infoWindow, html) {
       google.maps.event.addListener(marker, 'click', function () {
@@ -115,9 +238,8 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   google.maps.event.addListener(infoWindow, 'domready', function() {
               $("#visited-park").on("submit", function(evt) {
                   evt.preventDefault();
-                  console.log("hi!");
                     $.post('/add-park', {"park-id": $('#park-id').val()}, function(msg){
-                      console.log(msg);
+                      $("#msg").empty().append(msg);
                     });
               });  // on submit
   }); // bind listener after infoWindow exists
