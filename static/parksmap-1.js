@@ -176,7 +176,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
                     '<p><b>Phone Number: </b>' + park.recAreaPhoneNumber + '</p>' +
                     '<form id="visited-park" action=\'/add-park\' method=\'POST\'>' +
                     '<input type="hidden" name="park-name" id="park-id" value="'+ park.recAreaID +'">' +
-                    '<input class="visit-button" type="submit" value="I\'ve visited this park">' + '<p><div id="msg"></div></p>' +
+                    '<input id="visit-button" type="submit" value="I\'ve visited this park">' + '<p><div id="msg"></div></p>' +
                     '</form>' +
                 '</div>');
 
@@ -214,7 +214,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
                   '<p><b>Phone Number: </b>' + park.recAreaPhoneNumber + '</p>' +
                   '<form id="visited-park" action=\'/add-park\' method=\'POST\'>' +
                   '<input type="hidden" name="park-name" id="park-id" value="'+ park.recAreaID +'">' +
-                  '<input class="visit-button" type="submit" value="I\'ve visited this park"><div id="msg"></div>' +
+                  '<input id="visit-button" type="submit" value="I haven\'t been to this park"><div id="msg"></div>' +
                   '</form>' +
               '</div>');
 
@@ -232,10 +232,11 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
             $.post('/add-park', {"park-id": $('#park-id').val()}, function(msg){
               $("#msg").empty().append(msg);
               changeIcon(marker);
-            });
-          });  // on submit
-        }); // click listener after infoWindow exists
-    } // close bindInfoWindow
+              changeText();
+              }); // post park-id value
+            });  // on submit
+      }); // click listener after infoWindow exists
+  } // close bindInfoWindow
 
   function changeIcon(marker) {
     if (marker.icon === parkIcon) {
@@ -244,6 +245,12 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
       marker.setIcon(parkIcon);
     }
   } // close changeIcon
+
+  function changeText() {
+    var buttonText = document.getElementById("visit-button");
+    if (buttonText.value=="I\'ve visited this park") buttonText.value = "I haven\'t been to this park";
+    else buttonText = "I\'ve visited this park";
+  } //close changeText
 } // close init function
 
 google.maps.event.addDomListener(window, 'load', initMap);

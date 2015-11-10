@@ -45,13 +45,11 @@ class Visited_Park(db.Model):
         # check to see if user has not visited this park
         # if user has not added this park, add it to the database
         if len(if_visited) == 0:
-            print self.rec_area_id
             db.session.add(self)
             db.session.commit()
             return "Park Added"
         # if user has already added this park, remove it from database
         else:
-            print self.rec_area_id
             visited = db.session.query(Visited_Park).filter(Visited_Park.user_id == self.user_id, Visited_Park.rec_area_id == self.rec_area_id).first()
             db.session.delete(visited)
             db.session.commit()
