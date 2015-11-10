@@ -84,17 +84,22 @@ def process_login():
     email = request.form.get('email')
     password = request.form.get('password')
 
-    account = User.query.filter_by(email=email).first()
+    try:
+        account = User.query.filter_by(email=email).first()
 
-    if check_password(account.password, password):
-        user_id = account.user_id
-        first_name = account.first_name
+        if check_password(account.password, password):
+            user_id = account.user_id
+            first_name = account.first_name
 
-        flash('Welcome back, '+first_name+'!')
-        session['user'] = user_id
-        return render_template('landing.html', mapkey=mapkey)
-    else:
-        flash('That email and password combination does not exist.')
+            flash('Welcome back, '+first_name+'!')
+            session['user'] = user_id
+            return render_template('landing.html', mapkey=mapkey)
+        else:
+            flash('That email and password combination does not exist.')
+            return redirect('/login')
+
+    except AttributeError:
+        flash('Please enter a valid email or password.')
         return redirect('/login')
 
 

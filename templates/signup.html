@@ -2,14 +2,24 @@
 {% block content %}
 
     <h2>Please register for an account.</h2>
+    <h3>All fields are required.</h3>
 
-    <form action="/process-signup" id="signup" method="POST">
-      <label>First Name: <input type="text" name="first_name" placeholder="Jane"></label>
-      <label>Last Name: <input type="text" name="last_name" placeholder="Smith"></label>
-      <label>Email: <input type="email" name="email" placeholder="yourname@email.com"></label>
-      <label>Password: <input type="password" name="password" placeholder="yourpassword"></label>
-      <label>Zipcode: <input type="text" name="zipcode" placeholder="94301"></label>
+    <form name="signup" action="/process-signup" onsubmit="return validateForm()" id="signup" method="POST">
+      <label>First Name: <input type="text" name="first_name" placeholder="Jane" required></label>
+      <label>Last Name: <input type="text" name="last_name" placeholder="Smith" required></label>
+      <label>Email: <input type="email" name="email" placeholder="yourname@email.com" required></label>
+      <label>Password: <input type="password" name="password" placeholder="yourpassword" required></label>
+      <label>Zipcode: <input type="text" name="zipcode" placeholder="94301" required></label>
       <input type="submit" value="Register">
     </form>
 
+    <script>
+    function validateForm() {
+    var x = document.forms["signup"].value;
+    if (x == null || x == "") {
+        alert("All fields must be filled out.");
+        return false;
+        }
+    }
+    </script>
 {% endblock %}

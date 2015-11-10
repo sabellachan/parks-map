@@ -3,10 +3,11 @@
 
     <h2>Please log in.</h2>
 
-    <form action="/process-login" method="POST">
-      <label>Email: <input type="text" name="email" placeholder="yourname@email.com"></label>
-      <label>Password: <input type="password" name="password" placeholder="yourpassword"></label>
+    <form action="/process-login" id="login" method="POST">
+      <label>Email: <input type="text" name="email" placeholder="yourname@email.com" required></label>
+      <label>Password: <input type="password" name="password" placeholder="yourpassword" required></label>
       <input type="submit" value="Log in">
     </form>
+
 
 {% endblock %}

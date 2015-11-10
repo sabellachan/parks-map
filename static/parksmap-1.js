@@ -248,9 +248,10 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
 
   function changeText() {
     var buttonText = document.getElementById("visit-button");
-    if (buttonText.value=="I\'ve visited this park") buttonText.value = "I haven\'t been to this park";
-    else buttonText = "I\'ve visited this park";
+      if (buttonText.value=="I\'ve visited this park") buttonText.value = "I haven\'t been to this park";
+      else buttonText.value = "I\'ve visited this park";
   } //close changeText
+  
 } // close init function
 
 google.maps.event.addDomListener(window, 'load', initMap);
