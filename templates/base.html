@@ -6,7 +6,7 @@
 </head>
 
 <body>
-  {% if session %}
+  {% if 'user' in session %}
     <form action="/landing" method="GET">
       <input type="submit" value="Home">
     </form>
