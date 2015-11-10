@@ -1,5 +1,3 @@
-var markersArray = [];
-
 var parkIcon = 'static/img/tree-yellowicon.png';
 var visitedIcon = 'static/img/tree-greenicon.png';
 
@@ -163,6 +161,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
                 position: new google.maps.LatLng(park.recAreaLat, park.recAreaLong),
                 map: map,
                 icon: parkIcon,
+                id: park.recAreaID,
                 draggable: false,
                 title: 'Rec Area ' + park.recAreaName,
             });
@@ -177,15 +176,13 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
                     '<p><b>Phone Number: </b>' + park.recAreaPhoneNumber + '</p>' +
                     '<form id="visited-park" action=\'/add-park\' method=\'POST\'>' +
                     '<input type="hidden" name="park-name" id="park-id" value="'+ park.recAreaID +'">' +
-                    '<input type="submit" value="I\'ve visited this park">' + '<p><div id="msg"></div></p>' +
+                    '<input class="visit-button" type="submit" value="I\'ve visited this park">' + '<p><div id="msg"></div></p>' +
                     '</form>' +
                 '</div>');
 
 
-            // markersArray.push(marker);
             bindInfoWindow(marker, map, infoWindow, html);
         }
-
     });
 
    $.get('/parks-visited.json', function (parks) {
@@ -202,6 +199,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
               position: new google.maps.LatLng(park.recAreaLat, park.recAreaLong),
               map: map,
               icon: visitedIcon,
+              id: park.recAreaID,
               draggable: false,
               title: 'Rec Area ' + park.recAreaName,
           });
@@ -216,35 +214,37 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
                   '<p><b>Phone Number: </b>' + park.recAreaPhoneNumber + '</p>' +
                   '<form id="visited-park" action=\'/add-park\' method=\'POST\'>' +
                   '<input type="hidden" name="park-name" id="park-id" value="'+ park.recAreaID +'">' +
-                  '<input type="submit" value="I\'ve visited this park"><div id="msg"></div>' +
+                  '<input class="visit-button" type="submit" value="I\'ve visited this park"><div id="msg"></div>' +
                   '</form>' +
               '</div>');
 
-
-          // markersArray.push(marker);
           bindInfoWindow(marker, map, infoWindow, html);
       }
-
   });
 
   function bindInfoWindow(marker, map, infoWindow, html) {
       google.maps.event.addListener(marker, 'click', function () {
           infoWindow.close();
           infoWindow.setContent(html);
-
           infoWindow.open(map, marker);
-      });
-  }
-  google.maps.event.addListener(infoWindow, 'domready', function() {
-              $("#visited-park").on("submit", function(evt) {
-                  evt.preventDefault();
-                    $.post('/add-park', {"park-id": $('#park-id').val()}, function(msg){
-                      $("#msg").empty().append(msg);
-                    });
-              });  // on submit
-  }); // bind listener after infoWindow exists
+            $("#visited-park").on("submit", function(evt) {
+            evt.preventDefault();
+            $.post('/add-park', {"park-id": $('#park-id').val()}, function(msg){
+              $("#msg").empty().append(msg);
+              changeIcon(marker);
+            });
+          });  // on submit
+        }); // click listener after infoWindow exists
+    } // close bindInfoWindow
 
-}
+  function changeIcon(marker) {
+    if (marker.icon === parkIcon) {
+      marker.setIcon(visitedIcon);
+    } else {
+      marker.setIcon(parkIcon);
+    }
+  } // close changeIcon
+} // close init function
 
 google.maps.event.addDomListener(window, 'load', initMap);
 
