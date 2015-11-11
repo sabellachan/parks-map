@@ -14,91 +14,259 @@ function initMap() {
     panControl: false,
     streetViewControl: false,
     styles: [
-      {"stylers": [
-          {"hue": "#bbff00"},
-          {"weight": 0.5},
-          {"gamma": 0.5}
-        ]
-      },
-      {"elementType": "labels",
-       "stylers": [
-          {"visibility": "off"}
-        ]
-      },
-      {"featureType": "landscape.natural",
-       "stylers": [
-          {"color": "#a4cc48"}
-        ]
-      },
-      {"featureType": "road",
-       "elementType": "geometry",
-       "stylers": [
-          {"color": "#ffffff"},
-          {"visibility": "on"},
-          {"weight": 1}
-        ]
-      },
-      {"featureType": "administrative",
-       "elementType": "labels",
-       "stylers": [
-          {"visibility": "on"}
-        ]
-      },
-      {"featureType": "road.highway",
-       "elementType": "labels",
-       "stylers": [
-          {"visibility": "simplified"},
-          {"gamma": 1.14},
-          {"saturation": -18}
-        ]
-      },
-      {"featureType": "road.highway.controlled_access",
-       "elementType": "labels",
-       "stylers": [
-          {"saturation": 30},
-          {"gamma": 0.76}
-        ]
-      },
-      {"featureType": "road.local",
-       "stylers": [
-          {"visibility": "simplified"},
-          {"weight": 0.4},
-          {"lightness": -8}
-        ]
-      },
-      {"featureType": "water",
-       "stylers": [
-          {"color": "#4aaecc"}
-        ]
-      },
-      {"featureType": "landscape.man_made",
-       "stylers": [
-          {"color": "#718e32"}
-        ]
-      },
-      {"featureType": "poi.business",
-       "stylers": [
-          {"saturation": 68},
-          {"lightness": -61}
-        ]
-      },
-      {"featureType": "administrative.locality",
-       "elementType": "labels.text.stroke",
-       "stylers": [
-          {"weight": 2.7},
-          {"color": "#f4f9e8"}
-        ]
-      },
-      {"featureType": "road.highway.controlled_access",
-       "elementType": "geometry.stroke",
-       "stylers": [
-          {"weight": 1.5},
-          {"color": "#e53013"},
-          {"saturation": -42},
-          {"lightness": 28}
-        ]
-      }
-    ],
+    {
+    "featureType": "administrative",
+    "elementType": "all",
+    "stylers": [
+        {
+            "visibility": "off"
+        }
+    ]
+    },
+    {
+    "featureType": "administrative",
+    "elementType": "geometry.stroke",
+    "stylers": [
+        {
+            "visibility": "on"
+        }
+    ]
+    },
+    {
+    "featureType": "administrative",
+    "elementType": "labels",
+    "stylers": [
+        {
+            "visibility": "on"
+        },
+        {
+            "color": "#716464"
+        },
+        {
+            "weight": "0.01"
+        }
+    ]
+    },
+    {
+    "featureType": "administrative.country",
+    "elementType": "labels",
+    "stylers": [
+        {
+            "visibility": "on"
+        }
+    ]
+    },
+    {
+    "featureType": "landscape",
+    "elementType": "all",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        }
+    ]
+    },
+    {
+    "featureType": "landscape.natural",
+    "elementType": "geometry",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        }
+    ]
+    },
+    {
+    "featureType": "landscape.natural.landcover",
+    "elementType": "geometry",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        }
+    ]
+    },
+    {
+    "featureType": "poi",
+    "elementType": "all",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        }
+    ]
+    },
+    {
+    "featureType": "poi",
+    "elementType": "geometry.fill",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        }
+    ]
+    },
+    {
+    "featureType": "poi",
+    "elementType": "geometry.stroke",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        }
+    ]
+    },
+    {
+    "featureType": "poi",
+    "elementType": "labels.text",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        }
+    ]
+    },
+    {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        }
+    ]
+    },
+    {
+    "featureType": "poi",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        }
+    ]
+    },
+    {
+    "featureType": "poi.attraction",
+    "elementType": "geometry",
+    "stylers": [
+        {
+            "visibility": "on"
+        }
+    ]
+    },
+    {
+    "featureType": "road",
+    "elementType": "all",
+    "stylers": [
+        {
+            "visibility": "on"
+        }
+    ]
+    },
+    {
+    "featureType": "road.highway",
+    "elementType": "all",
+    "stylers": [
+        {
+            "visibility": "off"
+        }
+    ]
+    },
+    {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+        {
+            "visibility": "on"
+        }
+    ]
+    },
+    {
+    "featureType": "road.highway",
+    "elementType": "geometry.fill",
+    "stylers": [
+        {
+            "visibility": "on"
+        }
+    ]
+    },
+    {
+    "featureType": "road.highway",
+    "elementType": "geometry.stroke",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        },
+        {
+            "color": "#a05519"
+        },
+        {
+            "saturation": "-13"
+        }
+    ]
+    },
+    {
+    "featureType": "road.local",
+    "elementType": "all",
+    "stylers": [
+        {
+            "visibility": "on"
+        }
+    ]
+    },
+    {
+    "featureType": "transit",
+    "elementType": "all",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        }
+    ]
+    },
+    {
+    "featureType": "transit",
+    "elementType": "geometry",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        }
+    ]
+    },
+    {
+    "featureType": "transit.station",
+    "elementType": "geometry",
+    "stylers": [
+        {
+            "visibility": "on"
+        }
+    ]
+    },
+    {
+    "featureType": "water",
+    "elementType": "all",
+    "stylers": [
+        {
+            "visibility": "simplified"
+        },
+        {
+            "color": "#84afa3"
+        },
+        {
+            "lightness": 52
+        }
+    ]
+    },
+    {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+        {
+            "visibility": "on"
+        }
+    ]
+    },
+    {
+    "featureType": "water",
+    "elementType": "geometry.fill",
+    "stylers": [
+        {
+            "visibility": "on"
+        }
+    ]
+    }
+  ],
     mapTypeId: google.maps.MapTypeId.TERRAIN
   });
 

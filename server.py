@@ -8,11 +8,14 @@ import os
 import uuid
 import hashlib
 import datetime
+import urllib
+import json
 
 app = Flask(__name__)
 
 appkey = os.environ['appkey']
 mapkey = os.environ['mapkey']
+geocodekey = os.environ['geocodekey']
 
 app.secret_key = appkey
 
@@ -57,7 +60,7 @@ def process_signup():
         new_user = User(reg_date=reg_date, email=email, password=hashed_password, first_name=first_name, last_name=last_name, zipcode=zipcode)
         db.session.add(new_user)
         db.session.commit()
-        flash("You created an account. Please login.")
+        flash('You created an account. Please login.')
     else:
         flash("You already have an account. Please login")
     return redirect('/login')
@@ -78,7 +81,7 @@ def show_login():
 
 
 @app.route('/process-login', methods=["GET", "POST"])
-def process_login():
+def process_login_form():
     """Process login form. Check to see if email and password combination exist in database."""
 
     email = request.form.get('email')
@@ -237,7 +240,16 @@ def view_visited_parks():
         # visited_parks is a list
         visited_parks = db.session.query(Rec_Area).join(Visited_Park).filter(Visited_Park.user_id == user_id).all()
 
-        return render_template('visited.html', parks=visited_parks)
+        park_locations = {}
+
+        for visited_park in visited_parks:
+            geocode = json.load(urllib.urlopen(('https://maps.googleapis.com/maps/api/geocode/json?latlng={},{}&key={}').format(visited_park.latitude, visited_park.longitude, geocodekey)))
+            x = geocode[u'results']
+            geocode_data = x[1]
+            location = geocode_data[u'formatted_address']
+            park_locations[visited_park] = location
+
+        return render_template('visited.html', parks=park_locations)
     else:
         flash('You are not logged in.')
         return render_template('index.html')

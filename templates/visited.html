@@ -3,11 +3,12 @@
 
     <h2>Your Parks</h2>
     <div class="visited">
-        {% for park in parks %}
+        {% for key, value in parks.iteritems() %}
 
-            <p>{{ park.rec_area_name }}</p>
+            <p>{{ key.rec_area_name }}: {{ value }}</p>
 
         {% endfor %}
     </div>
 
 {% endblock %}
+

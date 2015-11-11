@@ -4,7 +4,7 @@
     <h2>Please register for an account.</h2>
     <h3>All fields are required.</h3>
 
-    <form name="signup" action="/process-signup" onsubmit="return validateForm()" id="signup" method="POST">
+    <form name="signup" action="/process-signup" id="signup" method="POST">
       <label>First Name: <input type="text" name="first_name" placeholder="Jane" required></label>
       <label>Last Name: <input type="text" name="last_name" placeholder="Smith" required></label>
       <label>Email: <input type="email" name="email" placeholder="yourname@email.com" required></label>
@@ -13,13 +13,4 @@
       <input type="submit" value="Register">
     </form>
 
-    <script>
-    function validateForm() {
-    var x = document.forms["signup"].value;
-    if (x == null || x == "") {
-        alert("All fields must be filled out.");
-        return false;
-        }
-    }
-    </script>
 {% endblock %}
