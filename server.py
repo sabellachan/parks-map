@@ -4,6 +4,9 @@ from flask import Flask, render_template, redirect, request, flash, session, jso
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import User, Visited_Park, Rec_Area, Activity, Park_Activity, connect_to_db, db
+from correlation import pearson
+import operator
+import random
 import os
 import uuid
 import hashlib
@@ -149,7 +152,9 @@ def show_user_account():
 def park_info():
     """JSON information about each unvisited park."""
 
-    subquery = db.session.query(Visited_Park.rec_area_id)
+    user_id = session['user']
+
+    subquery = db.session.query(Visited_Park.rec_area_id).filter(Visited_Park.user_id == user_id)
     parks = db.session.query(Rec_Area).filter(Rec_Area.rec_area_id.notin_(subquery)).all()
 
     list_of_parks = []
@@ -253,6 +258,83 @@ def view_visited_parks():
     else:
         flash('You are not logged in.')
         return render_template('index.html')
+
+
+#############################################################################
+# SUGGEST NEW PARK
+
+@app.route('/suggest-park')
+def suggest_new_park():
+    """Suggest a park the user may be interested in using Pearson correlation."""
+
+    user_id = session['user']
+
+    # find session user's list of visited parks (list of objects)
+    user_visited_parks = Visited_Park.query.filter(Visited_Park.user_id == user_id).all()
+
+    # find all active users in the database who isn't user_id (list of objects)
+    active_users = db.session.query(Visited_Park.user_id).distinct(Visited_Park.user_id).filter(Visited_Park.user_id != user_id).all()
+
+    # list of objects
+    all_rec_areas = db.session.query(Rec_Area).filter(Rec_Area.rec_area_id).all()
+
+    user_visited_bools = []
+
+    pearson_results = {}
+
+    # turn park visits for user_id into 1/0: 1 = visited, 0 = unvisited
+    for rec_area in all_rec_areas:
+        i = 0
+        if rec_area.rec_area_id == user_visited_parks[i].rec_area_id:
+            user_visited_bools.append(1)
+            i += 1
+        else:
+            user_visited_bools.append(0)
+            i += 1
+
+    # type(user_visited_parks) => list
+    # user_visited_parks[0] => <Visited Parks visited_id=40 rec_area_id=12722 user_id=12>
+    # user_visited_parks[0].rec_area_id => 12722
+    # for user_id = 12, I'm only getting one 1, but 12 has visited two parks
+
+    # create an array for each user, do the Pearson correlation against user_visited_bools, and add the Pearson number to pearson_results
+    for active_user in active_users:
+
+        other_user_id = active_user.user_id
+
+        other_visited_parks = Visited_Park.query.filter(Visited_Park.user_id == other_user_id).all()
+
+        other_visited_bools = []
+
+        for rec_area in all_rec_areas:
+            i = 0
+            if rec_area.rec_area_id == other_visited_parks[i].rec_area_id:
+                other_visited_bools.append(1)
+                i += 1
+            else:
+                other_visited_bools.append(0)
+                i += 1
+
+        # find Pearson coefficient for other user + user_id
+        pearson_coeff = pearson(zip(user_visited_bools, other_visited_bools))
+
+        # log active user + user_id's Pearson coefficient
+        pearson_results[other_user_id] = pearson_coeff
+
+    # sort pearson_results to find the person with the highest number
+    sorted_pearson = sorted(pearson_results.items(), key=operator.itemgetter(1), reverse=True)
+    most_similar_user = sorted_pearson[0]  # returns tuple, [0] is a user_id, [1] is Pearson coefficient
+    most_similar_user_id = most_similar_user[0]
+
+    # filter out parks from pearson person that user_id has been to
+    most_similar_user_parks = db.session.query(Visited_Park).filter(Visited_Park.user_id == most_similar_user_id, Visited_Park.rec_area_id.notin_(user_visited_parks)).all()
+
+    # randomly suggest a park from pearson person's leftovers
+    suggested_park_id = (random.choice(most_similar_user_parks)).rec_area_id
+
+    suggested_park_name = (Rec_Area.query.filter(Rec_Area.rec_area_id == suggested_park_id).first()).rec_area_name
+
+    return suggested_park_name
 
 
 #############################################################################
