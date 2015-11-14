@@ -272,6 +272,12 @@ def suggest_new_park():
     # find session user's list of visited parks (list of objects)
     user_visited_parks = Visited_Park.query.filter(Visited_Park.user_id == user_id).all()
 
+    # make list of rec_area_ids from user_visited_parks
+    user_visited_rec_area_ids = []
+
+    for user_visited_park in user_visited_parks:
+        user_visited_rec_area_ids.append(user_visited_park.rec_area_id)
+
     # find all active users in the database who isn't user_id (list of objects)
     active_users = db.session.query(Visited_Park.user_id).distinct(Visited_Park.user_id).filter(Visited_Park.user_id != user_id).all()
 
@@ -284,13 +290,10 @@ def suggest_new_park():
 
     # turn park visits for user_id into 1/0: 1 = visited, 0 = unvisited
     for rec_area in all_rec_areas:
-        i = 0
-        if rec_area.rec_area_id == user_visited_parks[i].rec_area_id:
+        if rec_area.rec_area_id in user_visited_rec_area_ids:
             user_visited_bools.append(1)
-            i += 1
         else:
             user_visited_bools.append(0)
-            i += 1
 
     # type(user_visited_parks) => list
     # user_visited_parks[0] => <Visited Parks visited_id=40 rec_area_id=12722 user_id=12>
@@ -302,18 +305,22 @@ def suggest_new_park():
 
         other_user_id = active_user.user_id
 
+        # find other user's list of visited parks (list of objects)
         other_visited_parks = Visited_Park.query.filter(Visited_Park.user_id == other_user_id).all()
+
+        # make list of rec_area_ids from user_visited_parks
+        other_visited_rec_area_ids = []
+
+        for other_visited_park in other_visited_parks:
+            other_visited_rec_area_ids.append(other_visited_park.rec_area_id)
 
         other_visited_bools = []
 
         for rec_area in all_rec_areas:
-            i = 0
-            if rec_area.rec_area_id == other_visited_parks[i].rec_area_id:
+            if rec_area.rec_area_id in other_visited_rec_area_ids:
                 other_visited_bools.append(1)
-                i += 1
             else:
                 other_visited_bools.append(0)
-                i += 1
 
         # find Pearson coefficient for other user + user_id
         pearson_coeff = pearson(zip(user_visited_bools, other_visited_bools))
@@ -327,14 +334,14 @@ def suggest_new_park():
     most_similar_user_id = most_similar_user[0]
 
     # filter out parks from pearson person that user_id has been to
-    most_similar_user_parks = db.session.query(Visited_Park).filter(Visited_Park.user_id == most_similar_user_id, Visited_Park.rec_area_id.notin_(user_visited_parks)).all()
+    most_similar_user_parks = db.session.query(Visited_Park).filter(Visited_Park.user_id == most_similar_user_id, Visited_Park.rec_area_id.notin_(user_visited_rec_area_ids)).all()
 
     # randomly suggest a park from pearson person's leftovers
     suggested_park_id = (random.choice(most_similar_user_parks)).rec_area_id
 
     suggested_park_name = (Rec_Area.query.filter(Rec_Area.rec_area_id == suggested_park_id).first()).rec_area_name
 
-    return suggested_park_name
+    return "You should visit {}".format(suggested_park_name)
 
 
 #############################################################################
