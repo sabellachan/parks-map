@@ -9,6 +9,7 @@ from server import app
 import csv
 
 key = os.environ['key']
+geocodekey = os.environ['geocodekey']
 
 
 def load_rec_areas():
@@ -33,11 +34,17 @@ def load_rec_areas():
             latitude = None
             longitude = None
 
+        geocode = json.load(urllib.urlopen(('https://maps.googleapis.com/maps/api/geocode/json?latlng={},{}&key={}').format(latitude, longitude, geocodekey)))
+        x = geocode[u'results']
+        geocode_data = x[1]
+        location = geocode_data[u'formatted_address']
+
         rec_area = Rec_Area(rec_area_id=rec_area_id,
                             rec_area_name=rec_area_name,
                             description=description,
                             latitude=latitude,
                             longitude=longitude,
+                            location=location,
                             contact_phone=contact_phone)
 
         db.session.add(rec_area)

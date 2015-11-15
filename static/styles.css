@@ -1,3 +1,14 @@
 #map {
     height: 600px;
 }
+
+#new-park {
+    display: inline-block;
+}
+
+#barChart {
+    width: 400px;
+    height: 400px;
+}
+
+

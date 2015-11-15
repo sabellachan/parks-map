@@ -1,19 +1,55 @@
-{% extends 'base.html' %}
-{% block content %}
+<!doctype html>
+<html>
+<head>
+  <title>Parktake: Cause the Outdoors Await</title>
+  <script src="https://code.jquery.com/jquery.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
-    <h2>Your Parks</h2>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/static/jquery.pageslide.css">
+  <link rel="stylesheet" href="/static/styles.css">
+
+</head>
+
+<body>
+
+    <h3>Your Parks</h3>
+    <div id="new-park-suggestion">
+    <p>Based on where you've been, you may enjoy visiting <div id="new-park"></div>!</p>
+    </div>
+    <br>
     <div class="visited">
-        {% for key, value in parks.iteritems() %}
+        <ul>
+        {% for park in parks %}
 
-            <p>{{ key.rec_area_name }}: {{ value }}</p>
+            <li><b>{{ park.rec_area_name }}:</b> {{ park.location }}</li>
 
         {% endfor %}
+        </ul>
     </div>
 
+    <div class="states-chart">
+        <canvas id="donutChart"></canvas>
+    </div>
 
-    <div class="">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
+    <script>
+    $.get('/suggest-park', function(msg){
+        $("#new-park").empty().append(msg)
+    });
 
-{% endblock %}
+
+    // var options = { responsive: true };
+
+    // var ctx_donut = $("#donutChart").get(0).getContext("2d");
+
+    // $.get('/parks-in-states.json', function (data){
+    //     var stateDonutChart = new Chart(ctx_donut).Doughnut(data.states, options)
+    // });
+
+    </script>
+
+</body>
+</html>
 

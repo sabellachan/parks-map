@@ -73,6 +73,7 @@ class Rec_Area(db.Model):
     description = db.Column(db.Text, nullable=True)
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
+    location = db.Column(db.Text, nullable=True)
     contact_phone = db.Column(db.String(15), nullable=True)
 
     def __repr__(self):

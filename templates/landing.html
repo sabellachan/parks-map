@@ -2,20 +2,34 @@
 
 {% block content %}
 
-<p><img src="/static/img/tree-yellowicon.png"> New Park</p>
-<p><img src="/static/img/tree-greenicon.png"> Visited Park</p>
+  <p><a href="/view-park" class="view-parks">View Parks</a></p>
+
+  <p><img src="/static/img/tree-yellowicon.png"> New Park           <img src="/static/img/tree-greenicon.png"> Visited Park</p>
 
     <input id="search" class="controls" type="text" size="60" placeholder="Montana, USA">
 
       <div id="map"></div>
 
-      <script src="https://maps.googleapis.com/maps/api/js?key={{ mapkey }}&libraries=places"></script>
-      <script src="https://code.jquery.com/jquery.js"></script>
-      <script src="/static/parksmap-1.js"></script>
+    
+<!--     <div id="modal" style="display:none">
+    <h2>Modal</h2>
+        <a href="javascript:$.pageslide.close()">Close</a>
+    </div> -->
 
-<form action="/add-park" method="POST">
-    <input type="hidden" name="recAreaID" id="rec-area-id">
-    <input type="hidden" name="userID" id="user-id" value="{{ session.user }}">
-</form>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ mapkey }}&libraries=places"></script>
+  <script src="/static/parksmap-1.js"></script>
+  <script src="/static/jquery.pageslide.min.js"></script>
+
+  <form action="/add-park" method="POST">
+      <input type="hidden" name="recAreaID" id="rec-area-id">
+      <input type="hidden" name="userID" id="user-id" value="{{ session.user }}">
+  </form>
+
+  <script>
+      $("a.view-parks").pageslide({
+          iframe: true
+      });
+  </script>
 
 {% endblock %}

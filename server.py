@@ -37,7 +37,7 @@ def show_index():
 # SIGNUP
 
 
-@app.route('/signup', methods=["POST"])
+@app.route('/signup')
 def show_signup():
     """Show sign-up form."""
 
@@ -73,7 +73,7 @@ def process_signup():
 # LOGIN
 
 
-@app.route('/login', methods=["GET", "POST"])
+@app.route('/login')
 def show_login():
     """Show login page."""
 
@@ -242,22 +242,103 @@ def view_visited_parks():
 
     if 'user' in session:
         user_id = session['user']
+
         # visited_parks is a list
         visited_parks = db.session.query(Rec_Area).join(Visited_Park).filter(Visited_Park.user_id == user_id).all()
 
-        park_locations = {}
-
-        for visited_park in visited_parks:
-            geocode = json.load(urllib.urlopen(('https://maps.googleapis.com/maps/api/geocode/json?latlng={},{}&key={}').format(visited_park.latitude, visited_park.longitude, geocodekey)))
-            x = geocode[u'results']
-            geocode_data = x[1]
-            location = geocode_data[u'formatted_address']
-            park_locations[visited_park] = location
-
-        return render_template('visited.html', parks=park_locations)
+        return render_template('visited.html', parks=visited_parks)
     else:
         flash('You are not logged in.')
         return render_template('index.html')
+
+
+@app.route('/parks-in-states.json')
+def get_data_for_chart():
+    """Collect information about what states each visited park is in to represent on a bar chart."""
+
+    pass
+    # all_states = {
+    #     "AL": "Alabama",
+    #     "AK": "Alaska",
+    #     "AZ": "Arizona",
+    #     "AR": "Arkansas",
+    #     "CA": "California",
+    #     "CO": "Colorado",
+    #     "CT": "Connecticut",
+    #     "DE": "Delaware",
+    #     "FL": "Florida",
+    #     "GA": "Georgia",
+    #     "HI": "Hawaii",
+    #     "ID": "Idaho",
+    #     "IL": "Illinois",
+    #     "IN": "Indiana",
+    #     "IA": "Iowa",
+    #     "KS": "Kansas",
+    #     "KY": "Kentucky",
+    #     "LA": "Louisiana",
+    #     "ME": "Maine",
+    #     "MD": "Maryland",
+    #     "MA": "Massachusetts",
+    #     "MI": "Michigan",
+    #     "MN": "Minnesota",
+    #     "MS": "Mississippi",
+    #     "MO": "Missouri",
+    #     "MT": "Montana",
+    #     "NE": "Nebraska",
+    #     "NV": "Nevada",
+    #     "NH": "New Hampshire",
+    #     "NJ": "New Jersey",
+    #     "NM": "New Mexico",
+    #     "NY": "New York",
+    #     "NC": "North Carolina",
+    #     "ND": "North Dakota",
+    #     "OH": "Ohio",
+    #     "OK": "Oklahoma",
+    #     "OR": "Oregon",
+    #     "PA": "Pennsylvania",
+    #     "RI": "Rhode Island",
+    #     "SC": "South Carolina",
+    #     "SD": "South Dakota",
+    #     "TN": "Tennessee",
+    #     "TX": "Texas",
+    #     "UT": "Utah",
+    #     "VT": "Vermont",
+    #     "VA": "Virginia",
+    #     "WA": "Washington",
+    #     "WV": "West Virginia",
+    #     "WI": "Wisconsin",
+    #     "WY": "Wyoming"
+    # }
+
+    # if 'user' in session:
+    #     user_id = session['user']
+
+    #     # visited_parks is a list
+    #     visited_parks = db.session.query(Rec_Area).join(Visited_Park).filter(Visited_Park.user_id == user_id).all()
+
+    #     park_locations = {}
+
+    #     states = {}
+
+    #     for visited_park in visited_parks:
+    #         geocode = json.load(urllib.urlopen(('https://maps.googleapis.com/maps/api/geocode/json?latlng={},{}&key={}').format(visited_park.latitude, visited_park.longitude, geocodekey)))
+    #         x = geocode[u'results']
+    #         geocode_data = x[1]
+    #         location = geocode_data[u'formatted_address']
+    #         park_locations[visited_park] = location
+
+    #     for park_location in park_locations.values():
+    #         park_location_split = park_location.split(",")
+    #         location = park_location_split[:-1]
+    #         if location[1] in all_states.keys():
+
+    # print states
+
+        # data_dict = {
+        #     'states': user_states
+        # }
+
+        # return jsonify(data_dict)
 
 
 #############################################################################
@@ -341,7 +422,7 @@ def suggest_new_park():
 
     suggested_park_name = (Rec_Area.query.filter(Rec_Area.rec_area_id == suggested_park_id).first()).rec_area_name
 
-    return "You should visit {}".format(suggested_park_name)
+    return suggested_park_name
 
 
 #############################################################################
