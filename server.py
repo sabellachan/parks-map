@@ -254,91 +254,130 @@ def view_visited_parks():
 
 @app.route('/parks-in-states.json')
 def get_data_for_chart():
-    """Collect information about what states each visited park is in to represent on a bar chart."""
+    """Collect information about what states each visited park is in to represent on a doughnut chart."""
 
-    pass
-    # all_states = {
-    #     "AL": "Alabama",
-    #     "AK": "Alaska",
-    #     "AZ": "Arizona",
-    #     "AR": "Arkansas",
-    #     "CA": "California",
-    #     "CO": "Colorado",
-    #     "CT": "Connecticut",
-    #     "DE": "Delaware",
-    #     "FL": "Florida",
-    #     "GA": "Georgia",
-    #     "HI": "Hawaii",
-    #     "ID": "Idaho",
-    #     "IL": "Illinois",
-    #     "IN": "Indiana",
-    #     "IA": "Iowa",
-    #     "KS": "Kansas",
-    #     "KY": "Kentucky",
-    #     "LA": "Louisiana",
-    #     "ME": "Maine",
-    #     "MD": "Maryland",
-    #     "MA": "Massachusetts",
-    #     "MI": "Michigan",
-    #     "MN": "Minnesota",
-    #     "MS": "Mississippi",
-    #     "MO": "Missouri",
-    #     "MT": "Montana",
-    #     "NE": "Nebraska",
-    #     "NV": "Nevada",
-    #     "NH": "New Hampshire",
-    #     "NJ": "New Jersey",
-    #     "NM": "New Mexico",
-    #     "NY": "New York",
-    #     "NC": "North Carolina",
-    #     "ND": "North Dakota",
-    #     "OH": "Ohio",
-    #     "OK": "Oklahoma",
-    #     "OR": "Oregon",
-    #     "PA": "Pennsylvania",
-    #     "RI": "Rhode Island",
-    #     "SC": "South Carolina",
-    #     "SD": "South Dakota",
-    #     "TN": "Tennessee",
-    #     "TX": "Texas",
-    #     "UT": "Utah",
-    #     "VT": "Vermont",
-    #     "VA": "Virginia",
-    #     "WA": "Washington",
-    #     "WV": "West Virginia",
-    #     "WI": "Wisconsin",
-    #     "WY": "Wyoming"
-    # }
+    # database returns state abbreviations in unicode, so all_states uses unicode as the reference
+    all_states = {
+        "AL": "Alabama",
+        "AK": "Alaska",
+        "AZ": "Arizona",
+        "AR": "Arkansas",
+        "CA": "California",
+        "CO": "Colorado",
+        "CT": "Connecticut",
+        "DE": "Delaware",
+        "FL": "Florida",
+        "GA": "Georgia",
+        "HI": "Hawaii",
+        "ID": "Idaho",
+        "IL": "Illinois",
+        "IN": "Indiana",
+        "IA": "Iowa",
+        "KS": "Kansas",
+        "KY": "Kentucky",
+        "LA": "Louisiana",
+        "ME": "Maine",
+        "MD": "Maryland",
+        "MA": "Massachusetts",
+        "MI": "Michigan",
+        "MN": "Minnesota",
+        "MS": "Mississippi",
+        "MO": "Missouri",
+        "MT": "Montana",
+        "NE": "Nebraska",
+        "NV": "Nevada",
+        "NH": "New Hampshire",
+        "NJ": "New Jersey",
+        "NM": "New Mexico",
+        "NY": "New York",
+        "NC": "North Carolina",
+        "ND": "North Dakota",
+        "OH": "Ohio",
+        "OK": "Oklahoma",
+        "OR": "Oregon",
+        "PA": "Pennsylvania",
+        "RI": "Rhode Island",
+        "SC": "South Carolina",
+        "SD": "South Dakota",
+        "TN": "Tennessee",
+        "TX": "Texas",
+        "UT": "Utah",
+        "VT": "Vermont",
+        "VA": "Virginia",
+        "WA": "Washington",
+        "WV": "West Virginia",
+        "WI": "Wisconsin",
+        "WY": "Wyoming"
+    }
 
-    # if 'user' in session:
-    #     user_id = session['user']
+    color_scheme = ["#76B041", "#61723D", "#536E6B", "#A26316", "#4D5057"]
 
-    #     # visited_parks is a list
-    #     visited_parks = db.session.query(Rec_Area).join(Visited_Park).filter(Visited_Park.user_id == user_id).all()
+    if 'user' in session:
+        user_id = session['user']
 
-    #     park_locations = {}
+        # visited_parks is a list
+        visited_parks = db.session.query(Rec_Area).join(Visited_Park).filter(Visited_Park.user_id == user_id).all()
 
-    #     states = {}
+        # visited_states isn't populating currently cause the states are coming in as unicode
+        visited_states = {}
 
-    #     for visited_park in visited_parks:
-    #         geocode = json.load(urllib.urlopen(('https://maps.googleapis.com/maps/api/geocode/json?latlng={},{}&key={}').format(visited_park.latitude, visited_park.longitude, geocodekey)))
-    #         x = geocode[u'results']
-    #         geocode_data = x[1]
-    #         location = geocode_data[u'formatted_address']
-    #         park_locations[visited_park] = location
+        for visited_park in visited_parks:
+            location = visited_park.location
+            # split_location is a list
+            split_location = location.split(',')
 
-    #     for park_location in park_locations.values():
-    #         park_location_split = park_location.split(",")
-    #         location = park_location_split[:-1]
-    #         if location[1] in all_states.keys():
+            if ((split_location[-2].encode('utf-8'))[1:3]) in all_states.keys():
+                state = all_states[((split_location[-2].encode('utf-8'))[1:3])]
 
-    # print states
+                if state in visited_states:
+                    visited_states[state] += 1
+                else:
+                    visited_states[state] = 1
 
-        # data_dict = {
-        #     'states': user_states
-        # }
+            elif split_location[-2] in all_states.values():
+                state = split_location[-2]
 
-        # return jsonify(data_dict)
+                if state in visited_states:
+                    visited_states[state] += 1
+                else:
+                    visited_states[state] = 1
+
+            elif ((split_location[-3].encode('utf-8'))[1:3]) in all_states.keys():
+                state = all_states[((split_location[-3].encode('utf-8'))[1:3])]
+
+                if state in visited_states:
+                    visited_states[state] += 1
+                else:
+                    visited_states[state] = 1
+
+            else:
+                state_zip = split_location[-2]
+                state_abbreviation = state_zip[1:3]
+
+                state = all_states[state_abbreviation]
+
+                if state in visited_states:
+                    visited_states[state] += 1
+                else:
+                    visited_states[state] = 1
+
+        user_states = []
+
+        for state, count in visited_states.iteritems():
+            chart_data = {
+                "value": count,
+                "color": random.choice(color_scheme),
+                "highlight": "#E5A532",
+                "label": state
+            }
+
+            user_states.append(chart_data)
+
+        data_dict = {
+            'states': user_states
+        }
+
+        return jsonify(data_dict)
 
 
 #############################################################################
@@ -420,9 +459,9 @@ def suggest_new_park():
     # randomly suggest a park from pearson person's leftovers
     suggested_park_id = (random.choice(most_similar_user_parks)).rec_area_id
 
-    suggested_park_name = (Rec_Area.query.filter(Rec_Area.rec_area_id == suggested_park_id).first()).rec_area_name
+    suggested_park = Rec_Area.query.filter(Rec_Area.rec_area_id == suggested_park_id).first()
 
-    return suggested_park_name
+    return "{} ({})".format(suggested_park.rec_area_name, suggested_park.location)
 
 
 #############################################################################

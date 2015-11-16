@@ -29,6 +29,8 @@
     </div>
 
     <div class="states-chart">
+        <h4>States</h4>
+        <p>What states have your park visits been in? Mouse over each section to see.</p>
         <canvas id="donutChart"></canvas>
     </div>
 
@@ -40,13 +42,13 @@
     });
 
 
-    // var options = { responsive: true };
+    var options = { responsive: true };
 
-    // var ctx_donut = $("#donutChart").get(0).getContext("2d");
+    var ctx_donut = $("#donutChart").get(0).getContext("2d");
 
-    // $.get('/parks-in-states.json', function (data){
-    //     var stateDonutChart = new Chart(ctx_donut).Doughnut(data.states, options)
-    // });
+    $.get('/parks-in-states.json', function (data){
+        var stateDonutChart = new Chart(ctx_donut).Doughnut(data.states, options)
+    });
 
     </script>
 
