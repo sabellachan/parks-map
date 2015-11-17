@@ -11,8 +11,7 @@ import os
 import uuid
 import hashlib
 import datetime
-import urllib
-import json
+
 
 app = Flask(__name__)
 
@@ -117,10 +116,6 @@ def show_landing_page():
 
 
 #############################################################################
-# NICE TO HAVE: FORGOT PASSWORD
-
-
-#############################################################################
 # ACCOUNT/USER INFORMATION
 
 
@@ -138,10 +133,60 @@ def show_user_account():
         return redirect('/login')
 
 
-# NICE TO HAVE
-# @app.route('/update-account')
-# def update_user_account():
-#     pass
+@app.route('/update-account')
+def update_user_account():
+    """User chooses to update their account."""
+
+    if 'user' in session:
+        logged_user = session['user']
+        user = User.query.get(logged_user)
+        return render_template('update-account.html', user=user)
+
+    else:
+        flash('You are not logged in.')
+        return redirect('/login')
+
+
+@app.route('/save-changes', methods=["POST"])
+def save_user_updates():
+    """Save user edits on account."""
+
+    if 'user' in session:
+        user_id = session['user']
+
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        zipcode = request.form.get('zipcode')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        hashed_password = hash_password(password)
+
+        user = db.session.query(User).filter(User.user_id == user_id).update({'first_name': first_name,
+                                                                              'last_name': last_name,
+                                                                              'zipcode': zipcode,
+                                                                              'email': email,
+                                                                              'password': hashed_password})
+        db.session.commit()
+
+        user = User.query.get(user_id)
+
+        flash('Your account has been updated.')
+        return render_template('account.html', user=user)
+
+    else:
+        flash('You are not logged in.')
+        return redirect('/login')
+
+
+#############################################################################
+# SHOW ABOUT PAGE
+
+
+@app.route('/about')
+def show_about_page():
+    """Display About page for the site."""
+
+    return render_template('about.html')
 
 
 #############################################################################
@@ -415,11 +460,6 @@ def suggest_new_park():
         else:
             user_visited_bools.append(0)
 
-    # type(user_visited_parks) => list
-    # user_visited_parks[0] => <Visited Parks visited_id=40 rec_area_id=12722 user_id=12>
-    # user_visited_parks[0].rec_area_id => 12722
-    # for user_id = 12, I'm only getting one 1, but 12 has visited two parks
-
     # create an array for each user, do the Pearson correlation against user_visited_bools, and add the Pearson number to pearson_results
     for active_user in active_users:
 
@@ -468,7 +508,7 @@ def suggest_new_park():
 # LOGOUT
 
 
-@app.route('/logout', methods=["POST"])
+@app.route('/logout')
 def process_logout():
     """Remove user from session"""
 
