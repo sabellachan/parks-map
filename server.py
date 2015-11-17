@@ -62,10 +62,16 @@ def process_signup():
         new_user = User(reg_date=reg_date, email=email, password=hashed_password, first_name=first_name, last_name=last_name, zipcode=zipcode)
         db.session.add(new_user)
         db.session.commit()
-        flash('You created an account. Please login.')
+
+        account = User.query.filter_by(email=email).first()
+        user_id = account.user_id
+
+        flash('Welcome, '+first_name+'!')
+        session['user'] = user_id
+        return render_template('landing.html', mapkey=mapkey)
     else:
         flash("You already have an account. Please login")
-    return redirect('/login')
+        return redirect('/login')
 
 
 #############################################################################
