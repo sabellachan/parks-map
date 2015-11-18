@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
 
+    <div class="content">
     <h3>Your Account</h3>
-    <div class="account-info">
         <p>First Name: {{ user.first_name }}</p>
         <p>Last Name: {{ user.last_name }}</p>
         <p>Email: {{ user.email }}</p>
         <p>Zipcode: {{ user.zipcode }}</p>
-    </div>
 
     <form action="/update-account">
         <input type="submit" value="Update Account">
     </form>
+    </div>
+
+    
     <br>
 {% endblock %}

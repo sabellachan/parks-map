@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <h2>Please register for an account.</h2>
-    <h3>All fields are required.</h3>
+  <div class="content">
+    <h3>Please register for an account.</h3>
+    <h4>All fields are required.</h4>
 
     <form name="signup" action="/process-signup" id="signup" method="POST">
       <p><label>First Name: <input type="text" name="first_name" placeholder="Jane" required></label></p>
@@ -12,5 +13,6 @@
       <p><label>Zipcode: <input type="text" name="zipcode" placeholder="94301" required></label></p>
       <p><input type="submit" value="Register"></p>
     </form>
+  </div>
 
 {% endblock %}

@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <h2>Please log in.</h2>
+    <div class="content">
+        <h3>Please log in.</h3>
 
-    <form action="/process-login" id="login" method="POST">
-      <p><label>Email: <input type="text" name="email" placeholder="yourname@email.com" required></label></p>
-      <p><label>Password: <input type="password" name="password" placeholder="yourpassword" required></label></p>
-      <p><input type="submit" value="Log in"></p>
-    </form>
-
+        <form action="/process-login" id="login" method="POST">
+          <p><label>Email: <input type="text" name="email" placeholder="yourname@email.com" required></label></p>
+          <p><label>Password: <input type="password" name="password" placeholder="yourpassword" required></label></p>
+          <p><input type="submit" value="Log in"></p>
+        </form>
+    </div>
 
 {% endblock %}

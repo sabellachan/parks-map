@@ -1,20 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <div class="content">
+    <p><a href="/view-park" class="view-parks">Your Parks</a></p>
+    <p><img src="/static/img/tree-yellowicon.png"> New Park           <img src="/static/img/tree-greenicon.png"> Visited Park</p>
+    <br>
+      <input id="search" class="controls" type="text" size="60" placeholder="Montana, USA">
 
-  <p><a href="/view-park" class="view-parks">Your Parks</a></p>
-  <br>
-  <p><img src="/static/img/tree-yellowicon.png"> New Park           <img src="/static/img/tree-greenicon.png"> Visited Park</p>
-  <br>
-    <input id="search" class="controls" type="text" size="60" placeholder="Montana, USA">
-
-      <div id="map"></div>
-
-    
-<!--     <div id="modal" style="display:none">
-    <h2>Modal</h2>
-        <a href="javascript:$.pageslide.close()">Close</a>
-    </div> -->
+    <div id="map"></div>
+  </div>
 
 
   <script src="https://maps.googleapis.com/maps/api/js?key={{ mapkey }}&libraries=places"></script>

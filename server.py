@@ -380,26 +380,11 @@ def get_data_for_chart():
             if ((split_location[-2].encode('utf-8'))[1:3]) in all_states.keys():
                 state = all_states[((split_location[-2].encode('utf-8'))[1:3])]
 
-                if state in visited_states:
-                    visited_states[state] += 1
-                else:
-                    visited_states[state] = 1
-
             elif split_location[-2] in all_states.values():
                 state = split_location[-2]
 
-                if state in visited_states:
-                    visited_states[state] += 1
-                else:
-                    visited_states[state] = 1
-
             elif ((split_location[-3].encode('utf-8'))[1:3]) in all_states.keys():
                 state = all_states[((split_location[-3].encode('utf-8'))[1:3])]
-
-                if state in visited_states:
-                    visited_states[state] += 1
-                else:
-                    visited_states[state] = 1
 
             else:
                 state_zip = split_location[-2]
@@ -407,10 +392,7 @@ def get_data_for_chart():
 
                 state = all_states[state_abbreviation]
 
-                if state in visited_states:
-                    visited_states[state] += 1
-                else:
-                    visited_states[state] = 1
+            increment_to_dictionary(state, visited_states)
 
         user_states = []
 
@@ -429,6 +411,13 @@ def get_data_for_chart():
         }
 
         return jsonify(data_dict)
+
+
+def increment_to_dictionary(key, dictionary):
+    if key in dictionary:
+        dictionary[key] += 1
+    else:
+        dictionary[key] = 1
 
 
 #############################################################################

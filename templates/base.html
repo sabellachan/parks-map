@@ -6,6 +6,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="/static/jquery.pageslide.css">
   <link rel="stylesheet" href="/static/styles.css">
 
@@ -62,11 +63,13 @@
     {% endwith %}
     <br>
 
-  {% block content %} put your content here {% endblock %}
+  {% block content %}
+  <div class="content">put your content here</div>
+  {% endblock %}
   {% block footer %}
     <div class="footer">
       <p id="data-source">Data source: <a href="https://ridb.recreation.gov">Recreation Information Database</a></p>
-      <p id="contact-info"><a href="mailto:#">Contact Us</a></p>
+      <p><a href="https://www.linkedin.com/in/jnhuynh"><i class="fa fa-linkedin-square"></i></a> <a href="https://github.com/sabellachan"><i class="fa fa-github-square"></i></a> <a href="mailto:#"><i class="fa fa-envelope"></i></a></p>
     </div>
   {% endblock %}
 

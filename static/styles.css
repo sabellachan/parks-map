@@ -11,4 +11,19 @@
     height: 400px;
 }
 
+#data-source {
+    font-size: 11px;
+}
 
+.footer {
+    padding: 1em;
+    border-top: 1px solid #8B8C8C;
+}
+
+.content {
+    margin: 1em;
+}
+
+.nav, .navbar, .navbar-default {
+    background-color: #70C5FA;
+}
