@@ -6,11 +6,11 @@
         <p>Please enter all fields.</p>
         <br>
         <form action="/save-changes" method="POST">
-            <p><label>First Name: <input type="text" name="first_name" placeholder="{{ user.first_name }}" required></label></p>
-            <p><label>Last Name: <input type="text" name="last_name" placeholder="{{ user.last_name }}" required></label></p>
-            <p><label>Email: <input type="email" name="email" placeholder="{{ user.email }}" required></label></p>
-            <p><label>Password: <input type="password" name="password" placeholder="yourpassword" required></label></p>
-            <p><label>Zipcode: <input type="text" name="zipcode" placeholder="{{ user.zipcode }}" required></label></p>
+            <p><label><b>First Name:</b> <input type="text" name="first_name" placeholder="{{ user.first_name }}" required></label></p>
+            <p><label><b>Last Name:</b> <input type="text" name="last_name" placeholder="{{ user.last_name }}" required></label></p>
+            <p><label><b>Email:</b> <input type="email" name="email" placeholder="{{ user.email }}" required></label></p>
+            <p><label><b>Password:</b> <input type="password" name="password" placeholder="yourpassword" required></label></p>
+            <p><label><b>Zipcode:</b> <input type="text" name="zipcode" placeholder="{{ user.zipcode }}" required></label></p>
             <input type="submit" value="Save Changes">
         </form>
     </div>

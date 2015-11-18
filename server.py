@@ -160,21 +160,16 @@ def save_user_updates():
     if 'user' in session:
         user_id = session['user']
 
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
-        zipcode = request.form.get('zipcode')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        hashed_password = hash_password(password)
-
-        user = db.session.query(User).filter(User.user_id == user_id).update({'first_name': first_name,
-                                                                              'last_name': last_name,
-                                                                              'zipcode': zipcode,
-                                                                              'email': email,
-                                                                              'password': hashed_password})
-        db.session.commit()
-
         user = User.query.get(user_id)
+
+        user.first_name = request.form.get('first_name')
+        user.last_name = request.form.get('last_name')
+        user.zipcode = request.form.get('zipcode')
+        user.email = request.form.get('email')
+        password = request.form.get('password')
+        user.password = hash_password(password)
+
+        db.session.commit()
 
         flash('Your account has been updated.')
         return render_template('account.html', user=user)
@@ -208,9 +203,28 @@ def park_info():
     subquery = db.session.query(Visited_Park.rec_area_id).filter(Visited_Park.user_id == user_id)
     parks = db.session.query(Rec_Area).filter(Rec_Area.rec_area_id.notin_(subquery)).all()
 
+    park_dict = get_parks(parks)
+
+    return jsonify(park_dict)
+
+
+@app.route('/parks-visited.json')
+def visited_park_info():
+    """JSON information about each visited park."""
+
+    user_id = session['user']
+
+    visited_parks = db.session.query(Rec_Area).join(Visited_Park).filter(Visited_Park.user_id == user_id).all()
+
+    visited_dict = get_parks(visited_parks)
+
+    return jsonify(visited_dict)
+
+
+def get_parks(park_list):
     list_of_parks = []
 
-    for park in parks:
+    for park in park_list:
 
         activities_query = db.session.query(Activity.activity_name).join(Park_Activity).filter(Park_Activity.rec_area_id == str(park.rec_area_id))
         list_of_activities = activities_query.all()
@@ -227,37 +241,7 @@ def park_info():
 
     park_dict = {'parks': list_of_parks}
 
-    return jsonify(park_dict)
-
-
-@app.route('/parks-visited.json')
-def visited_park_info():
-    """JSON information about each visited park."""
-
-    user_id = session['user']
-
-    visited_parks = db.session.query(Rec_Area).join(Visited_Park).filter(Visited_Park.user_id == user_id).all()
-
-    list_of_visited = []
-
-    for visited_park in visited_parks:
-
-        activities_query = db.session.query(Activity.activity_name).join(Park_Activity).filter(Park_Activity.rec_area_id == str(visited_park.rec_area_id))
-        list_of_activities = activities_query.all()
-
-        visited_park = {'recAreaID': visited_park.rec_area_id,
-                        'recAreaName': visited_park.rec_area_name,
-                        'recAreaDescription': visited_park.description,
-                        'recAreaActivities': list_of_activities,
-                        'recAreaLat': visited_park.latitude,
-                        'recAreaLong': visited_park.longitude,
-                        'recAreaPhoneNumber': visited_park.contact_phone}
-
-        list_of_visited.append(visited_park)
-
-    visited_dict = {'parks': list_of_visited}
-
-    return jsonify(visited_dict)
+    return park_dict
 
 
 #############################################################################
@@ -369,7 +353,6 @@ def get_data_for_chart():
         # visited_parks is a list
         visited_parks = db.session.query(Rec_Area).join(Visited_Park).filter(Visited_Park.user_id == user_id).all()
 
-        # visited_states isn't populating currently cause the states are coming in as unicode
         visited_states = {}
 
         for visited_park in visited_parks:
@@ -392,7 +375,7 @@ def get_data_for_chart():
 
                 state = all_states[state_abbreviation]
 
-            increment_to_dictionary(state, visited_states)
+            visited_states[state] = visited_states.get(state, 0) + 1
 
         user_states = []
 
@@ -413,19 +396,12 @@ def get_data_for_chart():
         return jsonify(data_dict)
 
 
-def increment_to_dictionary(key, dictionary):
-    if key in dictionary:
-        dictionary[key] += 1
-    else:
-        dictionary[key] = 1
-
-
 #############################################################################
 # SUGGEST NEW PARK
 
 @app.route('/suggest-park')
 def suggest_new_park():
-    """Suggest a park the user may be interested in using Pearson correlation."""
+    """Suggest a park the user may be interested in using an unconventional use of the Pearson correlation."""
 
     user_id = session['user']
 
