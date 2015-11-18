@@ -1,5 +1,5 @@
 #map {
-    height: 600px;
+    height: 500px;
 }
 
 #new-park {
@@ -25,5 +25,27 @@
 }
 
 .nav, .navbar, .navbar-default {
-    background-color: #70C5FA;
+    background-color: #CCDFD9;
+}
+
+body {
+    background-color: #EDEDED;
+}
+
+#pageslide {
+    /* These styles MUST be included. Do not change. */
+    display: none;
+    position: absolute;
+    position: fixed;
+    top: 0;
+    height: 100%;
+    z-index: 999999;
+    
+    /* Specify the width of your pageslide here */
+    width: 400px;
+    padding: 0 20px;
+    
+    /* These styles are optional, and describe how the pageslide will look */
+    background-color: #EDEDED;
+    color: #FFF;
 }
