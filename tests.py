@@ -1,13 +1,44 @@
+import os
 import unittest
-
 import server
+# from model import db
+from flask import Flask
+from flask.ext.testing import TestCase
+# import tempfile
+
+appkey = os.environ['appkey']
+mapkey = os.environ['mapkey']
+geocodekey = os.environ['geocodekey']
 
 
-class TestPageLoads(unittest.TestCase):
-    """Test any functions that simply render a template."""
+class TestCase(TestCase):
+    """Testing suite for server.py."""
+
+    # SQLALCHEMY_DATABASE_URI = "sqlite:///parks-test.db"
+    # TESTING = True
 
     def setUp(self):
         self.client = server.app.test_client()
+        # db.create_all()
+        # self.db_fd, server.app.config['DATABASE'] = tempfile.mkstemp()
+        # server.app.config['TESTING'] = True
+        # self.app = server.app.test_client()
+        # server.init_db()
+
+    def create_app(self):
+
+        app = Flask(__name__)
+        app.config['TESTING'] = True
+        return app
+
+    # def tearDown(self):
+    #     db.session.remote()
+    #     db.drop_all()
+    #     os.close(self.db_fd)
+    #     os.unlink(server.app.config['DATABASE'])
+
+    #############################################################################
+    # Test any functions that simply render a template.
 
     def test_load_homepage(self):
         """Tests to see if the index page comes up."""
@@ -16,7 +47,7 @@ class TestPageLoads(unittest.TestCase):
 
         self.assertEqual(result.status_code, 200)
         self.assertIn('text/html', result.headers['Content-Type'])
-        self.assertIn('<h1>Parktake <small>Cause the Outdoors Await</small></h1>', result.data)
+        self.assertIn('<h1>Parktake: <small>Cause the Outdoors Await</small></h1>', result.data)
 
     def test_load_signup(self):
         """Tests to see if the signup page comes up."""
@@ -25,16 +56,25 @@ class TestPageLoads(unittest.TestCase):
 
         self.assertEqual(result.status_code, 200)
         self.assertIn('text/html', result.headers['Content-Type'])
-        self.assertIn('<h3>Please register for an account.</h3>', result.data)
+        self.assertIn('Please register for an account.', result.data)
 
     def test_load_login(self):
-        """Tests to see if the signup page comes up."""
+        """Tests to see if the login page comes up."""
 
         result = self.client.get('/login')
 
         self.assertEqual(result.status_code, 200)
         self.assertIn('text/html', result.headers['Content-Type'])
-        self.assertIn('<h3>Please register for an account.</h3>', result.data)  ####
+        self.assertIn('Please log in.', result.data)
+
+    def test_load_about(self):
+        """Tests to see if the about page comes up."""
+
+        result = self.client.get('/about')
+
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('text/html', result.headers['Content-Type'])
+        self.assertIn('Parktake was inspired by a love of adventure.', result.data)
 
     def test_load_logout(self):
         """Tests to see if logout occurs properly."""
@@ -46,9 +86,8 @@ class TestPageLoads(unittest.TestCase):
         self.assertIn('text/html', result.headers['Content-Type'])
         self.assertIn('<a id="nav-login" href="/login">Log In</a>', result.data)
 
-
-class TestQueryData(unittest.TestCase):
-    """Test any functions that will query data from the database."""
+    #############################################################################
+    # Test any functions that will query data from the database.
 
     # def test_process_signup(self):  # UNSURE IF WORKS
     #     """Tests to see if the signup form will process properly."""
@@ -65,29 +104,27 @@ class TestQueryData(unittest.TestCase):
 
         ## /process-login - use a known account + a fake account to test for if it works/not works ^^
 
-    def test_process_login(self):
-        """Tests to see if the login form will process properly with a known user."""
+    # def test_process_login(self):
+    #     """Tests to see if the login form will process properly with a known user."""
 
-        result = self.client.post('/process-login',
-                                  data={'email': 'test@test.com',
-                                        'password': 'n'},
-                                  follow_redirects=True)
-        self.assertIn('<p>Welcome back,', result.data)
-        self.assertNotIn('<a id="nav-login" href="/login">Log In</a>', result.data)
+    #     result = self.client.post('/process-login',
+    #                               data={'email': 'test@test.com', 'password': 'n', 'mapkey': 'mapkey'},
+    #                               follow_redirects=True)
+    #     self.assertIn('Welcome back,', result.data)
+    #     self.assertNotIn('Log In', result.data)
 
 
-    # def test_mark_state_as_visited(self):
-    #     park = server.suggest_a_park_for_user(1)
-    #     self.assertEqual(park, "Yosemite")
+    #############################################################################
+    # Test any functions that will request a JSON response
 
-    # def test_incrementing(self):
-    #     increment = server.increment_to_dictionary()
+    # def test_parks_json(self):
+    #     response = self.client.get("/parks.json")
+    #     self.assertIsInstance(response, dict)
 
-    # def test_favorite_color_form(self):
-        #     test_client = server.app.test_client()
+    # def test_visited_parks_json(self):
+    #     response = self.client.get("/parks-visited.json")
+    #     self.assertEquals(response.json, dict(success=True))
 
-        #     result = test_client.post('/fav_color', data={'color': 'blue'})
-        #     self.assertIn('I like blue, too', result.data)
 
 if __name__ == "__main__":
     unittest.main()

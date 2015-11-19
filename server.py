@@ -289,9 +289,9 @@ def view_visited_parks():
 
 @app.route('/parks-in-states.json')
 def get_data_for_chart():
-    """Collect information about what states each visited park is in to represent on a doughnut chart."""
+    """Collect information about what state each visited park is in to represent on a doughnut chart."""
 
-    # database returns state abbreviations in unicode, so all_states uses unicode as the reference
+    # master list of states to check Google Maps API Geocode data against
     all_states = {
         "AL": "Alabama",
         "AK": "Alaska",
@@ -360,6 +360,7 @@ def get_data_for_chart():
             # split_location is a list
             split_location = location.split(',')
 
+            # geocode data from Google Maps isn't consistent, so this checks for all possibilities of how a state abbrevation could show up
             if ((split_location[-2].encode('utf-8'))[1:3]) in all_states.keys():
                 state = all_states[((split_location[-2].encode('utf-8'))[1:3])]
 
