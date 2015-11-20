@@ -1,8 +1,8 @@
 import os
 import unittest
 from server import app, get_parks
-from model import db, connect_to_db, example_data_rec_areas, example_data_users, example_data_visits
-from flask import Flask, session
+from model import User, Rec_Area, Visited_Park, db, connect_to_db, example_data_rec_areas, example_data_users, example_data_visits
+# from flask import Flask, session
 
 appkey = os.environ['appkey']
 mapkey = os.environ['mapkey']
@@ -185,18 +185,69 @@ class ParkTests(unittest.TestCase):
         self.assertIn('Lucy', result.data)
         self.assertNotIn('/login', result.data)
 
+    def test_save_account_logged_in(self):
+        """Test to see if save account page will show up if a user is logged in."""
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['user'] = '2'
+            c.set_cookie('localhost', 'MYCOOKIE', 'cookie_value')
+            result = c.post('/save-changes', data={'first_name': 'Lucy',
+                                                   'last_name': 'Vo',
+                                                   'email': 'lucy@test.com',
+                                                   'password': 'squirrel',
+                                                   'zipcode': '94306'},
+                                             follow_redirects=True)
+
+        self.assertIn('Your account has been updated.', result.data)
+        self.assertIn('Lucy', result.data)
+        self.assertNotIn('/login', result.data)
+
+    def test_save_account_not_logged_in(self):
+        """Test to see if save account page will show up if a user is not logged in."""
+
+        result = self.client.post('/save-changes', data={'first_name': 'Lucy',
+                                                         'last_name': 'Vo',
+                                                         'email': 'lucy@test.com',
+                                                         'password': 'squirrel',
+                                                         'zipcode': '94306'},
+                                                   follow_redirects=True)
+
+        self.assertNotIn('Your account has been updated.', result.data)
+        self.assertNotIn('Lucy', result.data)
+        self.assertIn('/login', result.data)
+
     #############################################################################
-    # Test any functions that will request a JSON response
+    # Test any functions to see if they're an instance of a built-in class
 
-    # def test_parks_json(self):
-    #     response = self.client.get("/parks.json")
-    #     # import pdb; pdb.set_trace()
-    #     self.assertIsInstance(response, json)
+    def test_get_parks(self):
+        """Test to see if this function returns a dictionary."""
 
-    # def test_visited_parks_json(self):
-    #     response = self.client.get("/parks-visited.json")
-    #     self.assertEquals(response.json, dict(success=True))
+        visited_parks = db.session.query(Rec_Area).join(Visited_Park).filter(Visited_Park.user_id == 2).all()
 
+        self.assertIsInstance(get_parks(visited_parks), dict)
+
+    def test_parks_json(self):
+        """Test to see if /parks.json route will return json response."""
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['user'] = '2'
+            c.set_cookie('localhost', 'MYCOOKIE', 'cookie_value')
+            response = c.get("/parks.json")
+
+        self.assertIsInstance(response, object)
+
+    def test_visited_parks_json(self):
+        """Test to see if /parks-visited.json route will return json response."""
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['user'] = '2'
+            c.set_cookie('localhost', 'MYCOOKIE', 'cookie_value')
+            response = c.get("/parks-visited.json")
+
+        self.assertIsInstance(response, object)
 
 if __name__ == "__main__":
     unittest.main()
