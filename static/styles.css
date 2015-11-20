@@ -3,7 +3,7 @@
 }
 
 #new-park {
-    display: inline-block;
+    display: inline;
 }
 
 #barChart {
@@ -41,7 +41,7 @@ body {
     z-index: 999999;
     
     /* Specify the width of your pageslide here */
-    width: 400px;
+    width: 350px;
     padding: 0 20px;
     
     /* These styles are optional, and describe how the pageslide will look */

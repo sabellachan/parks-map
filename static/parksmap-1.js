@@ -288,12 +288,12 @@ function initMap() {
     handleLocationError(false, infoWindow, getBounds());
   }
 
-function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-  infoWindow.setPosition(pos);
-  infoWindow.setContent(browserHasGeolocation ?
-                        'Error: The Geolocation service failed.' :
-                        'Error: Your browser doesn\'t support geolocation.');
-}
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+      infoWindow.setPosition(pos);
+      infoWindow.setContent(browserHasGeolocation ?
+                            'Error: The Geolocation service failed.' :
+                            'Error: Your browser doesn\'t support geolocation.');
+    }
 
   var infoWindow = new google.maps.InfoWindow({
       width: 150
@@ -315,13 +315,13 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   });
 
   // Retrieving the information with AJAX
-    $.get('/parks.json', function(data){
-        passParksInformation(data, parkIcon, "I\'ve visited this park");
-    });
+  $.get('/parks.json', function(data){
+    passParksInformation(data, parkIcon, "I\'ve visited this park");
+  });
 
-   $.get('/parks-visited.json', function(data){
-        passParksInformation(data, visitedIcon, "I haven\'t been to this park");
-    });
+  $.get('/parks-visited.json', function(data){
+    passParksInformation(data, visitedIcon, "I haven\'t been to this park");
+  });
 
   function passParksInformation(parks, icon, message) {
         var parksArray = parks.parks;
