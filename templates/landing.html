@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <div class="content">
-    <p><a href="/view-park" class="view-parks">Your Parks</a></p>
-    <p><img src="/static/img/tree-yellowicon.png"> New Park           <img src="/static/img/tree-greenicon.png"> Visited Park</p>
-    <br>
-      <input id="search" class="controls" type="text" size="60" placeholder="Montana, USA">
+  <div class="row">
+    <div class="col-xs-12 col-s-12 col-m-12 col-l-12" >
+      <p><a href="/view-park" class="view-parks">Your Parks</a></p>
+      <p><img src="/static/img/tree-yellowicon.png"> New Park           <img src="/static/img/tree-greenicon.png"> Visited Park</p>
+      <br>
+        <input id="search" class="controls" type="text" size="60" placeholder="Montana, USA">
 
-    <div id="map"></div>
+      <div id="map"></div>
+    </div>
   </div>
 
 

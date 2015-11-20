@@ -402,7 +402,7 @@ def get_data_for_chart():
 
 @app.route('/suggest-park')
 def suggest_new_park():
-    """Suggest a park the user may be interested in using an unconventional use of the Pearson correlation."""
+    """Suggest a park the user may be interested in with an unconventional use of the Pearson correlation."""
 
     user_id = session['user']
 

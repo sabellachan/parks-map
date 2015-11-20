@@ -1,29 +1,26 @@
 import os
 import unittest
-import server
-# from model import db
+from server import app, hash_password
+from model import User, db
 from flask import Flask
-from flask.ext.testing import TestCase
+# from flask.ext.testing import TestCase
+import datetime
 # import tempfile
+
 
 appkey = os.environ['appkey']
 mapkey = os.environ['mapkey']
 geocodekey = os.environ['geocodekey']
 
 
-class TestCase(TestCase):
+def connect_to_db(app):
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///"
+    db.app = app
+    db.init_app(app)
+
+
+class TestCase(unittest.TestCase):
     """Testing suite for server.py."""
-
-    # SQLALCHEMY_DATABASE_URI = "sqlite:///parks-test.db"
-    # TESTING = True
-
-    def setUp(self):
-        self.client = server.app.test_client()
-        # db.create_all()
-        # self.db_fd, server.app.config['DATABASE'] = tempfile.mkstemp()
-        # server.app.config['TESTING'] = True
-        # self.app = server.app.test_client()
-        # server.init_db()
 
     def create_app(self):
 
@@ -31,11 +28,31 @@ class TestCase(TestCase):
         app.config['TESTING'] = True
         return app
 
+    def setUp(self):
+        # set up fake test browser
+        self.client = app.test_client()
+
+        # connect to temporary database
+        connect_to_db(app)
+
+        # # create tables and add sample data
+        db.create_all()
+
+        # self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
+        # server.app.config['TESTING'] = True
+        # self.app = server.app.test_client()
+        # server.init_db()
+
     # def tearDown(self):
-    #     db.session.remote()
-    #     db.drop_all()
     #     os.close(self.db_fd)
     #     os.unlink(server.app.config['DATABASE'])
+
+    def create_test_user(self):
+        reg_date = datetime.datetime.now()
+
+        test_user = User(reg_date=reg_date, email='test@user.com', password=hash_password('password'), first_name='John', last_name='Test', zipcode='94107')
+        db.session.add(test_user)
+        db.session.commit()
 
     #############################################################################
     # Test any functions that simply render a template.
@@ -79,7 +96,7 @@ class TestCase(TestCase):
     def test_load_logout(self):
         """Tests to see if logout occurs properly."""
 
-        test_client = server.app.test_client()
+        test_client = app.test_client()
         result = test_client.get('/logout')
 
         self.assertEqual(result.status_code, 200)
@@ -102,16 +119,18 @@ class TestCase(TestCase):
     #     self.assertIn('<a href="/view-park" class="view-parks">Your Parks</a>', result.data)
     #     self.assertNotIn('<a id="nav-login" href="/login">Log In</a>', result.data)
 
-        ## /process-login - use a known account + a fake account to test for if it works/not works ^^
-
     # def test_process_login(self):
     #     """Tests to see if the login form will process properly with a known user."""
 
-    #     result = self.client.post('/process-login',
-    #                               data={'email': 'test@test.com', 'password': 'n', 'mapkey': 'mapkey'},
-    #                               follow_redirects=True)
+    #     # import pdb; pdb.set_trace()
+
+    #     result = self.client.post("/process-login",
+    #                             data={"email":'test@user.com', 'password':'password'},
+    #                             follow_redirects=True)
+
     #     self.assertIn('Welcome back,', result.data)
     #     self.assertNotIn('Log In', result.data)
+    #     self.assertNotIn('Please enter a valid email or password.', result.data)
 
 
     #############################################################################

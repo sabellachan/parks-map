@@ -315,8 +315,15 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   });
 
   // Retrieving the information with AJAX
-    $.get('/parks.json', function (parks) {
+    $.get('/parks.json', function(data){
+        passParksInformation(data, parkIcon, "I\'ve visited this park");
+    });
 
+   $.get('/parks-visited.json', function(data){
+        passParksInformation(data, visitedIcon, "I haven\'t been to this park");
+    });
+
+  function passParksInformation(parks, icon, message) {
         var parksArray = parks.parks;
 
         var park, marker, html;
@@ -328,7 +335,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
             marker = new google.maps.Marker({
                 position: new google.maps.LatLng(park.recAreaLat, park.recAreaLong),
                 map: map,
-                icon: parkIcon,
+                icon: icon,
                 id: park.recAreaID,
                 draggable: false,
                 title: 'Rec Area ' + park.recAreaName,
@@ -344,52 +351,13 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
                     '<p><b>Phone Number: </b>' + park.recAreaPhoneNumber + '</p>' +
                     '<form id="visited-park" action=\'/add-park\' method=\'POST\'>' +
                     '<input type="hidden" name="park-name" id="park-id" value="'+ park.recAreaID +'">' +
-                    '<input id="visit-button" type="submit" value="I\'ve visited this park">' + '<p><div id="msg"></div></p>' +
+                    '<input id="visit-button" type="submit" value="'+ message +'">' + '<p><div id="msg"></div></p>' +
                     '</form>' +
                 '</div>');
 
-
             bindInfoWindow(marker, map, infoWindow, html);
         }
-    });
-
-   $.get('/parks-visited.json', function (parks) {
-
-      var parksArray = parks.parks;
-
-      var park, marker, html;
-
-      for (var i = 0; i < parksArray.length; i++) {
-          park = parksArray[i];
-
-          // Define the marker
-          marker = new google.maps.Marker({
-              position: new google.maps.LatLng(park.recAreaLat, park.recAreaLong),
-              map: map,
-              icon: visitedIcon,
-              id: park.recAreaID,
-              draggable: false,
-              title: 'Rec Area ' + park.recAreaName,
-          });
-
-          // Define the content of the infoWindow
-          html = (
-              '<div class="window-content">' +
-                  '<p><b>ID: </b>' + park.recAreaID + '</p>' +
-                  '<p><b>Name: </b>' + park.recAreaName + '</p>' +
-                  '<p><b>Description: </b>' + park.recAreaDescription + '</p>' +
-                  '<p><b>Activities: </b>' + park.recAreaActivities + '</p>' +
-                  '<p><b>Phone Number: </b>' + park.recAreaPhoneNumber + '</p>' +
-                  '<form id="visited-park" action=\'/add-park\' method=\'POST\'>' +
-                  '<input type="hidden" name="park-name" id="park-id" value="'+ park.recAreaID +'">' +
-                  '<input id="visit-button" type="submit" value="I haven\'t been to this park"><div id="msg"></div>' +
-                  '</form>' +
-              '</div>');
-
-          bindInfoWindow(marker, map, infoWindow, html);
-      }
-  });
-
+    }
   function bindInfoWindow(marker, map, infoWindow, html) {
       google.maps.event.addListener(marker, 'click', function () {
           infoWindow.close();
@@ -419,7 +387,6 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
       if (buttonText.value=="I\'ve visited this park") buttonText.value = "I haven\'t been to this park";
       else buttonText.value = "I\'ve visited this park";
   } //close changeText
-  
 } // close init function
 
 google.maps.event.addDomListener(window, 'load', initMap);
