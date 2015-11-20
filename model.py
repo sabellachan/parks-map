@@ -208,6 +208,7 @@ def example_data_visits():
 #############################################################################
 # HASH FUNCTION
 
+
 def hash_password(password):
     salt = uuid.uuid4().hex
     return hashlib.sha256(salt.encode() + password.encode()).hexdigest() + ':' + salt
