@@ -1,11 +1,7 @@
 import os
 import unittest
-from server import app, hash_password
-from model import User, db
-from flask import Flask
-# from flask.ext.testing import TestCase
-import datetime
-# import tempfile
+from server import app
+from model import db, connect_to_db, example_data_rec_areas, example_data_users, example_data_visits
 
 
 appkey = os.environ['appkey']
@@ -13,49 +9,24 @@ mapkey = os.environ['mapkey']
 geocodekey = os.environ['geocodekey']
 
 
-def connect_to_db(app):
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///"
-    db.app = app
-    db.init_app(app)
-
-
-class TestCase(unittest.TestCase):
+class ParkTests(unittest.TestCase):
     """Testing suite for server.py."""
-
-    def create_app(self):
-
-        app = Flask(__name__)
-        app.config['TESTING'] = True
-        return app
 
     def setUp(self):
         # set up fake test browser
         self.client = app.test_client()
 
         # connect to temporary database
-        connect_to_db(app)
+        connect_to_db(app, "sqlite:///")
 
         # # create tables and add sample data
         db.create_all()
+        example_data_rec_areas()
+        example_data_users()
+        example_data_visits()
 
-        # self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
-        # server.app.config['TESTING'] = True
-        # self.app = server.app.test_client()
-        # server.init_db()
-
-    # def tearDown(self):
-    #     os.close(self.db_fd)
-    #     os.unlink(server.app.config['DATABASE'])
-
-    def create_test_user(self):
-        reg_date = datetime.datetime.now()
-
-        test_user = User(reg_date=reg_date, email='test@user.com', password=hash_password('password'), first_name='John', last_name='Test', zipcode='94107')
-        db.session.add(test_user)
-        db.session.commit()
-
-    #############################################################################
-    # Test any functions that simply render a template.
+#############################################################################
+# Test any functions that simply render a template.
 
     def test_load_homepage(self):
         """Tests to see if the index page comes up."""
@@ -103,44 +74,63 @@ class TestCase(unittest.TestCase):
         self.assertIn('text/html', result.headers['Content-Type'])
         self.assertIn('<a id="nav-login" href="/login">Log In</a>', result.data)
 
-    #############################################################################
-    # Test any functions that will query data from the database.
+#############################################################################
+# Test any functions that will query data from the database.
 
-    # def test_process_signup(self):  # UNSURE IF WORKS
-    #     """Tests to see if the signup form will process properly."""
+    def test_process_signup(self):
+        """Tests to see if the signup form will process properly."""
 
-    #     result = self.client.post('/process-signup',
-    #                               data={'first_name': "Jane",
-    #                                     'last_name': "Smith",
-    #                                     'zipcode': "94306",
-    #                                     'email': "jane@jane.com",
-    #                                     'password': 'password'},
-    #                               follow_redirects=True)
-    #     self.assertIn('<a href="/view-park" class="view-parks">Your Parks</a>', result.data)
-    #     self.assertNotIn('<a id="nav-login" href="/login">Log In</a>', result.data)
+        result = self.client.post('/process-signup',
+                                  data={'first_name': "Jane",
+                                        'last_name': "Smith",
+                                        'zipcode': "94306",
+                                        'email': "jane@jane.com",
+                                        'password': 'password'},
+                                  follow_redirects=True)
+        self.assertIn('<a href="/view-park" class="view-parks">Your Parks</a>', result.data)
+        self.assertNotIn('<a id="nav-login" href="/login">Log In</a>', result.data)
 
-    # def test_process_login(self):
-    #     """Tests to see if the login form will process properly with a known user."""
+    def test_process_login_known(self):
+        """Tests to see if the login form will process properly with a known user."""
 
-    #     # import pdb; pdb.set_trace()
+        result = self.client.post("/process-login",
+                                  data={"email": 'lucy@test.com', 'password': 'brindlepuppy'},
+                                  follow_redirects=True)
 
-    #     result = self.client.post("/process-login",
-    #                             data={"email":'test@user.com', 'password':'password'},
-    #                             follow_redirects=True)
+        self.assertIn('Welcome back,', result.data)
+        self.assertNotIn('Log In', result.data)
+        self.assertNotIn('Please enter a valid email or password.', result.data)
 
-    #     self.assertIn('Welcome back,', result.data)
-    #     self.assertNotIn('Log In', result.data)
-    #     self.assertNotIn('Please enter a valid email or password.', result.data)
+    def test_process_login_unknown(self):
+        """Tests to see if the login form will process properly with an unknown user."""
+
+        result = self.client.post("/process-login",
+                                  data={"email": 'acky@test.com', 'password': 'acky'},
+                                  follow_redirects=True)
+
+        self.assertNotIn('Welcome back,', result.data)
+        self.assertIn('Log In', result.data)
+        self.assertIn('Please enter a valid email or password.', result.data)
+
+    def test_process_login_bad_pwd(self):
+        """Tests to see if the login form will process properly with a known user and wrong password."""
+
+        result = self.client.post("/process-login",
+                                  data={"email": 'lucy@test.com', 'password': 'WRONG'},
+                                  follow_redirects=True)
+
+        self.assertNotIn('Welcome back,', result.data)
+        self.assertIn('Log In', result.data)
+        self.assertIn('That email and password combination does not exist.', result.data)
 
 
     #############################################################################
     # Test any functions that will request a JSON response
 
-
-    def test_parks_json(self):
-        response = self.client.get("/parks.json")
-        import pdb; pdb.set_trace()
-        self.assertIsInstance(response, dict)
+    # def test_parks_json(self):
+    #     response = self.client.get("/parks.json")
+    #     import pdb; pdb.set_trace()
+    #     self.assertIsInstance(response, dict)
 
     # def test_visited_parks_json(self):
     #     response = self.client.get("/parks-visited.json")

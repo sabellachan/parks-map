@@ -1,6 +1,10 @@
 """Creates database model for national parks project"""
 
 from flask_sqlalchemy import SQLAlchemy
+import csv
+import datetime
+import uuid
+import hashlib
 
 db = SQLAlchemy()
 
@@ -116,14 +120,107 @@ class Park_Activity(db.Model):
                                                                               self.activity_id,
                                                                               self.rec_area_id)
 
+#############################################################################
+# ADD EXAMPLE DATA FOR TESTING
+
+
+def example_data_rec_areas():
+    """Create some sample rec area data."""
+
+    # If tests are run more than once, empty out existing data
+    Rec_Area.query.delete()
+
+    # Add sample rec areas
+    rec_areas = open('seed_data/rec_areas_test.csv')
+
+    data = csv.reader(rec_areas)
+
+    for row in data:
+        description, rec_area_id, latitude, longitude, rec_area_name, contact_phone, location = row
+
+        rec_area = Rec_Area(rec_area_id=rec_area_id,
+                            rec_area_name=rec_area_name,
+                            description=description,
+                            latitude=latitude,
+                            longitude=longitude,
+                            location=location,
+                            contact_phone=contact_phone)
+
+        db.session.add(rec_area)
+
+    db.session.commit()
+
+
+def example_data_users():
+    """Create some sample user data."""
+
+    # If tests are run more than once, empty out existing data
+    User.query.delete()
+
+    reg_date = datetime.datetime.now()
+
+    maynard = User(user_id=1, reg_date=reg_date, email='admin@maynard.com', password=hash_password('wackywoo'), first_name='Maynard', last_name='Burns', zipcode='94107')
+    lucy = User(user_id=2, reg_date=reg_date, email='lucy@test.com', password=hash_password('brindlepuppy'), first_name='Lucy', last_name='Vo', zipcode='94587')
+    flynn = User(user_id=3, reg_date=reg_date, email='flynn@ryder.com', password=hash_password('rapunzel'), first_name='Flynn', last_name='Ryder', zipcode='10001')
+    alice = User(user_id=4, reg_date=reg_date, email='alice@thelookingglass.com', password=hash_password('whiterabbit'), first_name='Alice', last_name='Wonderland', zipcode='64850')
+
+    db.session.add_all([maynard, lucy, flynn, alice])
+    db.session.commit()
+
+
+def example_data_visits():
+    """Create some sample visit data."""
+
+    # If tests are run more than once, empty out existing data
+    Visited_Park.query.delete()
+
+    # User 01's visits
+    visit0101 = Visited_Park(visited_id=1, rec_area_id=2647, user_id=1)
+    visit0102 = Visited_Park(visited_id=2, rec_area_id=2991, user_id=1)
+    visit0103 = Visited_Park(visited_id=3, rec_area_id=2988, user_id=1)
+    visit0104 = Visited_Park(visited_id=4, rec_area_id=2994, user_id=1)
+
+    # User 02's visits
+    visit0201 = Visited_Park(visited_id=5, rec_area_id=2647, user_id=2)
+    visit0202 = Visited_Park(visited_id=6, rec_area_id=2991, user_id=2)
+    visit0203 = Visited_Park(visited_id=7, rec_area_id=2988, user_id=2)
+    visit0204 = Visited_Park(visited_id=8, rec_area_id=2733, user_id=2)
+
+    # User 03's visits
+    visit0301 = Visited_Park(visited_id=9, rec_area_id=2941, user_id=3)
+    visit0302 = Visited_Park(visited_id=10, rec_area_id=2991, user_id=3)
+    visit0303 = Visited_Park(visited_id=11, rec_area_id=2994, user_id=3)
+    visit0304 = Visited_Park(visited_id=12, rec_area_id=2725, user_id=3)
+
+    # User 04's visits
+    visit0401 = Visited_Park(visited_id=13, rec_area_id=2647, user_id=4)
+    visit0402 = Visited_Park(visited_id=14, rec_area_id=2988, user_id=4)
+    visit0403 = Visited_Park(visited_id=15, rec_area_id=2733, user_id=4)
+    visit0404 = Visited_Park(visited_id=16, rec_area_id=2725, user_id=4)
+
+    db.session.add_all([visit0101, visit0102, visit0103, visit0104,
+                        visit0201, visit0202, visit0203, visit0204,
+                        visit0301, visit0302, visit0303, visit0304,
+                        visit0401, visit0402, visit0403, visit0404])
+    db.session.commit()
+
+
+#############################################################################
+# HASH FUNCTION
+
+def hash_password(password):
+    salt = uuid.uuid4().hex
+    return hashlib.sha256(salt.encode() + password.encode()).hexdigest() + ':' + salt
+
 
 ##############################################################################
 # Connect to database
 
-def connect_to_db(app):
+
+def connect_to_db(app, db_uri='sqlite:///parks.db'):
     """Connect the database to our Flask app."""
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///parks.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     db.app = app
     db.init_app(app)
 
