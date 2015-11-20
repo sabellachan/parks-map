@@ -68,7 +68,7 @@ class ParkTests(unittest.TestCase):
         self.assertIn('Parktake was inspired by a love of adventure.', result.data)
 
     def test_load_landing(self):
-        """Tests to see if the landing page comes up."""  # CURRENTLY RETURNS 500 ERROR
+        """Tests to see if the landing page comes up."""
 
         with self.client as c:
             with c.session_transaction() as sess:
@@ -125,7 +125,7 @@ class ParkTests(unittest.TestCase):
                                   data={"email": 'lucy@test.com', 'password': 'brindlepuppy'},
                                   follow_redirects=True)
 
-        self.assertIn('Welcome back,', result.data)
+        self.assertIn('Welcome back, Lucy!', result.data)
         self.assertNotIn('Log In', result.data)
         self.assertNotIn('Please enter a valid email or password.', result.data)
 
@@ -151,6 +151,19 @@ class ParkTests(unittest.TestCase):
         self.assertIn('Log In', result.data)
         self.assertIn('That email and password combination does not exist.', result.data)
 
+    def test_show_account_logged_in(self):
+        """Test to see if account page will show up if a user is logged in."""
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['user'] = '2'
+            c.set_cookie('localhost', 'MYCOOKIE', 'cookie_value')
+            result = c.get('/account')
+
+        self.assertIn('Your Account', result.data)
+        self.assertIn('Lucy', result.data)
+        self.assertNotIn('/login', result.data)
+
     def test_show_account_not_logged_in(self):
         """Test to see if account page will show up if a user isn't logged in."""
 
@@ -159,18 +172,18 @@ class ParkTests(unittest.TestCase):
         self.assertNotIn('Your Account', result.data)
         self.assertIn('/login', result.data)
 
-    # def test_show_account_logged_in(self):  # CURRENTLY NOT WORKING
-    #     """Test to see if account page will show up if a user is logged in."""
+    def test_update_account_logged_in(self):
+        """Test to see if update account page will show up if a user is logged in."""
 
-    #     with app.test_client() as c:
-    #         with c.session_transaction() as sess:
-    #             sess['user_id'] = '2'
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['user'] = '2'
+            c.set_cookie('localhost', 'MYCOOKIE', 'cookie_value')
+            result = c.get('/update-account')
 
-    #     result = self.client.get("/account")
-
-    #     self.assertIn('Your Account', result.data)
-    #     self.assertNotIn('/login', result.data)
-
+        self.assertIn('Update Your Account', result.data)
+        self.assertIn('Lucy', result.data)
+        self.assertNotIn('/login', result.data)
 
     #############################################################################
     # Test any functions that will request a JSON response
