@@ -1,8 +1,7 @@
 import os
 import unittest
 from server import app, get_parks
-from model import User, Rec_Area, Visited_Park, db, connect_to_db, example_data_rec_areas, example_data_users, example_data_visits
-# from flask import Flask, session
+from model import Rec_Area, Visited_Park, db, connect_to_db, example_data_rec_areas, example_data_users, example_data_visits
 
 appkey = os.environ['appkey']
 mapkey = os.environ['mapkey']
@@ -259,6 +258,14 @@ class ParkTestsSession(unittest.TestCase):
         result = self.client.get('/view-park')
 
         self.assertIn('Based on where you\'ve been,', result.data)
+
+    def test_add_park(self):
+        """Test to see if a park will add properly."""
+
+        result = self.client.post('/add-park', data={'park-id': '2941'},
+                                               follow_redirects=True)
+
+        self.assertIn('Park Added', result.data)
 
     #############################################################################
     # Test any functions to see if they're an instance of a built-in class
