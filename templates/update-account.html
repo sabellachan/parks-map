@@ -1,18 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <div class="content">
-        <h3>Update Your Account</h3>
-        <p>Please enter all fields.</p>
-        <br>
-        <form action="/save-changes" method="POST">
-            <p><label><b>First Name:</b> <input type="text" name="first_name" placeholder="{{ user.first_name }}" required></label></p>
-            <p><label><b>Last Name:</b> <input type="text" name="last_name" placeholder="{{ user.last_name }}" required></label></p>
-            <p><label><b>Email:</b> <input type="email" name="email" placeholder="{{ user.email }}" required></label></p>
-            <p><label><b>Password:</b> <input type="password" name="password" placeholder="yourpassword" required></label></p>
-            <p><label><b>Zipcode:</b> <input type="text" name="zipcode" placeholder="{{ user.zipcode }}" required></label></p>
-            <input type="submit" value="Save Changes">
-        </form>
+    <div class="row">
+        <div class="col-xs-12 col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
+            <div class="content">
+                <h3>Update Your Account</h3>
+                <p>Please enter all fields.</p>
+                <br>
+                <form action="/save-changes" method="POST">
+                    <p><label><b>First Name:</b> <input type="text" name="first_name" placeholder="{{ user.first_name }}" required></label></p>
+                    <p><label><b>Last Name:</b> <input type="text" name="last_name" placeholder="{{ user.last_name }}" required></label></p>
+                    <p><label><b>Email:</b> <input type="email" name="email" placeholder="{{ user.email }}" required></label></p>
+                    <p><label><b>Password:</b> <input type="password" name="password" placeholder="yourpassword" required></label></p>
+                    <p><label><b>Zipcode:</b> <input type="text" name="zipcode" placeholder="{{ user.zipcode }}" required></label></p>
+                    <input type="submit" value="Save Changes">
+                </form>
+            </div>
+        </div>
     </div>
     <br>
 

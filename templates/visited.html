@@ -13,24 +13,26 @@
 <body>
 
     <h3>Your Parks</h3>
-    <div id="new-park-suggestion">
-    <p>Based on where you've been, you may enjoy visiting <span id="new-park"></span>!</p>
-    </div>
-    <br>
-    <div class="visited">
-        <ul>
-        {% for park in parks %}
+    <div class="content">
+        <div id="new-park-suggestion">
+            <p>Based on where you've been, you may enjoy visiting <span id="new-park"></span>!</p>
+        </div>
+        <br>
+        <div class="visited">
+            <ul>
+            {% for park in parks %}
 
-            <li><b>{{ park.rec_area_name }}:</b> {{ park.location }}</li>
+                <li><b>{{ park.rec_area_name }}:</b> {{ park.location }}</li>
 
-        {% endfor %}
-        </ul>
-    </div>
+            {% endfor %}
+            </ul>
+        </div>
 
-    <div class="states-chart">
-        <h4>States</h4>
-        <p>What states have your park visits been in? Mouse over each section to see.</p>
-        <canvas id="donutChart"></canvas>
+        <div class="states-chart">
+            <h4>States</h4>
+            <p>What states have your park visits been in? Mouse over each section to see.</p>
+            <canvas id="donutChart"></canvas>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>

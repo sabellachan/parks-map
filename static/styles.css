@@ -1,5 +1,35 @@
+body {
+    background-color: #EDEDED;
+}
+
+a:link {
+    color: #536E6B;
+}
+
+a:hover {
+    color: #76B041;
+}
+
+.welcome {
+    padding: 1em;
+    font-family: 'Raleway', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Playball', cursive;
+}
+
 #map {
     height: 500px;
+}
+
+.content {
+    font-family: 'Raleway', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    padding-left: 1em;
 }
 
 #new-park {
@@ -11,25 +41,42 @@
     height: 400px;
 }
 
-#data-source {
+#copyright, #data-source {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
     font-size: 11px;
+}
+
+.view-parks {
+    border: 2px solid #536E6B;
+    padding: 5px;
+    background-color: #CCDFD9;
+}
+
+#visited-legend {
+    padding-left: 2em;
+}
+
+#legend {
+    position: absolute;
+    right: 0px;
+    padding-right: 1em;
+}
+
+.states-chart {
+    padding-bottom: 2em;
 }
 
 .footer {
     padding: 1em;
 }
 
-.content {
-    margin: 1em;
-}
-
 .nav, .navbar, .navbar-default {
     background-color: #CCDFD9;
+    font-family: 'Raleway', sans-serif;
 }
 
-body {
-    background-color: #EDEDED;
-}
+/* CSS for PageSlide plug-in */
 
 #pageslide {
     /* These styles MUST be included. Do not change. */
@@ -47,4 +94,58 @@ body {
     /* These styles are optional, and describe how the pageslide will look */
     background-color: #EDEDED;
     color: #FFF;
+}
+
+/* Responsive: if the page is over 400px wide, do the following */
+
+@media (min-width: 400px) {
+    .header{
+        font-family: 'Playball', cursive;
+        font-size: 60px;
+        color: white;
+        opacity: 1.0;
+    }
+    #index-header {
+        z-index: 1;
+        width: 230px;
+        height: 120px;
+        position: absolute;
+        padding-left: 1em;
+        background-color: black;
+        opacity: 0.7;
+    }
+    #subtitle {
+        font-family: 'Raleway', sans-serif;
+        font-size: 16px;
+        font-weight: 300;
+        color: white;
+        opacity: 1.0;
+    }
+}
+
+/* Responsive: if the page is under 400px wide, do the following */
+
+@media (max-width: 400px) {
+    .header{
+        font-family: 'Playball', cursive;
+        font-size: 32px;
+        color: white;
+        opacity: 1.0;
+    }
+    #index-header {
+        z-index: 1;
+        width: 165px;
+        height: 75px;
+        position: absolute;
+        padding-left: 1em;
+        background-color: black;
+        opacity: 0.7;
+    }
+    #subtitle {
+        font-family: 'Raleway', sans-serif;
+        font-size: 12px;
+        font-weight: 300;
+        color: white;
+        opacity: 1.0;
+    }
 }

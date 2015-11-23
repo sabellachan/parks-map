@@ -1,18 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
 
-  <div class="content">
-    <h3>Please register for an account.</h3>
-    <h4>All fields are required.</h4>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
+      <div class="content">
+        <h3>Please register for an account.</h3>
+        <p>All fields are required.</p>
 
-    <form name="signup" action="/process-signup" id="signup" method="POST">
-      <p><label>First Name: <input type="text" name="first_name" placeholder="Jane" required></label></p>
-      <p><label>Last Name: <input type="text" name="last_name" placeholder="Smith" required></label></p>
-      <p><label>Email: <input type="email" name="email" placeholder="yourname@email.com" required></label></p>
-      <p><label>Password: <input type="password" name="password" placeholder="yourpassword" required></label></p>
-      <p><label>Zipcode: <input type="text" name="zipcode" placeholder="94301" required></label></p>
-      <p><input type="submit" value="Register"></p>
-    </form>
+        <form name="signup" action="/process-signup" id="signup" method="POST">
+          <p><label>First Name: <input type="text" name="first_name" placeholder="Jane" required></label></p>
+          <p><label>Last Name: <input type="text" name="last_name" placeholder="Smith" required></label></p>
+          <p><label>Email: <input type="email" name="email" placeholder="yourname@email.com" required></label></p>
+          <p><label>Password: <input type="password" name="password" placeholder="yourpassword" required></label></p>
+          <p><label>Zipcode: <input type="text" name="zipcode" placeholder="94301" required></label></p>
+          <p><input type="submit" value="Register"></p>
+        </form>
+      </div>
+    </div>
   </div>
 
 {% endblock %}

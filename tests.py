@@ -38,7 +38,7 @@ class ParkTests(unittest.TestCase):
 
         self.assertEqual(result.status_code, 200)
         self.assertIn('text/html', result.headers['Content-Type'])
-        self.assertIn('<h1>Parktake: <small>Cause the Outdoors Await</small></h1>', result.data)
+        self.assertIn('<a href="https://ridb.recreation.gov">Recreation Information Database</a>', result.data)
 
     def test_load_signup(self):
         """Tests to see if the signup page comes up."""
@@ -89,7 +89,7 @@ class ParkTests(unittest.TestCase):
                                         'email': "jane@jane.com",
                                         'password': 'password'},
                                   follow_redirects=True)
-        self.assertIn('<a href="/view-park" class="view-parks">Your Parks</a>', result.data)
+        self.assertIn('<a href="/view-park" class="view-parks">View Your Parks</a>', result.data)
         self.assertNotIn('<a id="nav-login" href="/login">Log In</a>', result.data)
 
     def test_process_signup_known_user(self):
