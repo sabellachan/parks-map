@@ -1,3 +1,5 @@
+"""Test suite for Parktake app."""
+
 import os
 import unittest
 from server import app, get_parks
@@ -9,7 +11,7 @@ geocodekey = os.environ['geocodekey']
 
 
 class ParkTests(unittest.TestCase):
-    """Testa for Parktake app for functions that don't require sessions."""
+    """Tests for Parktake app for functions that don't require sessions."""
 
     def setUp(self):
         # set up fake test browser
@@ -174,7 +176,7 @@ class ParkTests(unittest.TestCase):
         self.assertIsInstance(get_parks(visited_parks), dict)
 
 class ParkTestsSession(unittest.TestCase):
-    """Testa for Parktake app for functions that don't require sessions."""
+    """Tests for Parktake app for functions that don't require sessions."""
 
     def setUp(self):
         # set up fake test browser
@@ -253,14 +255,14 @@ class ParkTestsSession(unittest.TestCase):
         self.assertNotIn('/login', result.data)
 
     def test_view_park(self):
-        """Test to see if user can view their parks if a user is logged in."""
+        """Test to see if user can view their visited parks if s/he is logged in."""
 
         result = self.client.get('/view-park')
 
         self.assertIn('Based on where you\'ve been,', result.data)
 
     def test_add_park(self):
-        """Test to see if a park will add properly."""
+        """Test to see if a park will post to the database properly."""
 
         result = self.client.post('/add-park', data={'park-id': '2941'},
                                                follow_redirects=True)
@@ -295,7 +297,12 @@ class ParkTestsSession(unittest.TestCase):
     # Test suggestion feature
 
     def test_suggestion_feature(self):
-        """Test to see if the proper park suggestion is offered."""
+        """
+        Test to see if the proper park suggestion is offered.
+        Test Users 1 and 2 have almost the same visit history, except for one park each.
+        Test User 2 should get Zion National Park as her suggestion, as that's the only
+        park that deviates from Test User 1's visit history.
+        """
 
         response = self.client.get("/suggest-park")
 

@@ -1,3 +1,5 @@
+"""Flask server file for Parktake."""
+
 from jinja2 import StrictUndefined
 
 from flask import Flask, render_template, redirect, request, flash, session, jsonify
@@ -196,7 +198,7 @@ def show_about_page():
 
 @app.route('/parks.json')
 def park_info():
-    """JSON information about each unvisited park."""
+    """JSON information about each unvisited park. Pulls information from Rec_Area table."""
 
     user_id = session['user']
 
@@ -210,7 +212,7 @@ def park_info():
 
 @app.route('/parks-visited.json')
 def visited_park_info():
-    """JSON information about each visited park."""
+    """JSON information about each visited park. Pulls information from Visited_Park table."""
 
     user_id = session['user']
 
@@ -222,6 +224,8 @@ def visited_park_info():
 
 
 def get_parks(park_list):
+    """Turn query list into a dictionary to be turned into JSON."""
+
     list_of_parks = []
 
     for park in park_list:
@@ -258,6 +262,7 @@ def add_visited_parks():
 
         visited = Visited_Park(rec_area_id=rec_area_id, user_id=user_id)
 
+        # refer to model method on Visited_Park
         message = visited.add_to_db()
 
     else:
@@ -289,7 +294,10 @@ def view_visited_parks():
 
 @app.route('/parks-in-states.json')
 def get_data_for_chart():
-    """Collect information about what state each visited park is in to represent on a doughnut chart."""
+    """
+    Collect information about what state each visited park is in.
+    Passes information to Chart.js to represent on a doughnut chart.
+    """
 
     # master list of states to check Google Maps API Geocode data against
     all_states = {
@@ -402,7 +410,12 @@ def get_data_for_chart():
 
 @app.route('/suggest-park')
 def suggest_new_park():
-    """Suggest a park the user may be interested in with an unconventional use of the Pearson correlation."""
+    """
+    Suggest a park the user may be interested in with an unconventional use of the Pearson correlation.
+    Session user's visited parks is compared to the master list of parks, and a boolean list of 0/1 is created
+    based on whether s/he has visited the park. This is then done for all others users in the database to find
+    the user who is most similar. A suggestion will be made based on the most similar user.
+    """
 
     user_id = session['user']
 
@@ -498,11 +511,14 @@ def process_logout():
 
 
 def hash_password(password):
+    """Hash and add a salt for a password."""
+
     salt = uuid.uuid4().hex
     return hashlib.sha256(salt.encode() + password.encode()).hexdigest() + ':' + salt
 
 
 def check_password(hashed_password, user_password):
+    """Checks to see if the hashed password matches what a user enters to login."""
 
     password, salt = hashed_password.split(':')
     return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()

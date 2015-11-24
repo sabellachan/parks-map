@@ -344,7 +344,6 @@ function initMap() {
             // Define the content of the infoWindow
             html = (
                 '<div class="window-content">' +
-                    '<p><b>ID: </b>' + park.recAreaID + '</p>' +
                     '<p><b>Name: </b>' + park.recAreaName + '</p>' +
                     '<p><b>Description: </b>' + park.recAreaDescription + '</p>' +
                     '<p><b>Activities: </b>' + park.recAreaActivities + '</p>' +
