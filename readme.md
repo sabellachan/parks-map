@@ -1,11 +1,10 @@
 # Parktake
 #### Cause the Outdoors Await
----
+
 ![alt text](https://raw.githubusercontent.com/sabellachan/parks-map/master/static/readme/homepagescreenshot.png "Homepage")
 Parktake was inspired by a love of adventure. Recreation areas overseen by The National Parks Service are presented on an easy-to-use map for users to discover, explore, and check off that they've visited. This app is intended for users who love to go outdoors and would like a visual record of where they've been.
 
 ## Technical Stack
----
 * Python
 * Javascript
 * SQLAlchemy
@@ -20,13 +19,11 @@ Parktake was inspired by a love of adventure. Recreation areas overseen by The N
 * Unittest
 
 ## APIs Used
----
 * [Recreation Information Database](https://ridb.recreation.gov)
 * Google Maps
 * Google Maps Geocode
 
 ## Feature List
----
 #### User Accounts
 Users can sign up, login, and logout, as well as update their profiles.
 
@@ -46,12 +43,10 @@ A list of visited recreation areas is recorded, giving the name and location of 
 Based on the user's visit history, a new recreation area is suggested using machine learning with an implementation of the Pearson's correlation coefficient.
 
 ## Favorite Challenges
----
 * Google Maps API
 * Utilizing Pearson's algorithm for suggestion engine
 * Figuring out how to collect visit history data to be read by Chart.js
 * Integration testing the app
 
 ## About the Developer
----
 Jacqueline Huynh is a software developer living in the San Francisco Bay Area.
