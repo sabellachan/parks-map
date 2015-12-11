@@ -531,7 +531,7 @@ def check_password(hashed_password, user_password):
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
-    app.debug = False
+    app.debug = True
 
     connect_to_db(app)
     # connect_to_db(app, os.environ.get("DATABASE_URL"))
@@ -542,6 +542,6 @@ if __name__ == "__main__":
     DEBUG = "NO_DEBUG" not in os.environ
     PORT = int(os.environ.get("PORT", 5000))
 
-    app.run(host="0.0.0.0", port=PORT)
+    app.run(host="0.0.0.0", port=PORT, debug=DEBUG)
 
     app.run()
