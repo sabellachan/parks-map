@@ -5,6 +5,7 @@ import csv
 import datetime
 import uuid
 import hashlib
+import os
 
 db = SQLAlchemy()
 
@@ -220,10 +221,10 @@ def hash_password(password):
 # Connect to database
 
 
-def connect_to_db(app, db_uri='sqlite:///parks.db'):
-    """Connect the database to our Flask app."""
+def connect_to_db(app, db_uri=None):
+    """Connect the database to our PostgreSQL app."""
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', db_uri)
     db.app = app
     db.init_app(app)
 

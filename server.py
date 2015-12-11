@@ -432,7 +432,7 @@ def suggest_new_park():
     active_users = db.session.query(Visited_Park.user_id).distinct(Visited_Park.user_id).filter(Visited_Park.user_id != user_id).all()
 
     # list of objects
-    all_rec_areas = db.session.query(Rec_Area).filter(Rec_Area.rec_area_id).all()
+    all_rec_areas = db.session.query(Rec_Area).all()
 
     user_visited_bools = []
 
@@ -531,11 +531,17 @@ def check_password(hashed_password, user_password):
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
-    app.debug = False
+    app.debug = True
 
     connect_to_db(app)
+    # connect_to_db(app, os.environ.get("DATABASE_URL"))
 
     # Use the DebugToolbar
     DebugToolbarExtension(app)
+
+    # DEBUG = "NO_DEBUG" not in os.environ
+    # PORT = int(os.environ.get("PORT", 5000))
+
+    # app.run(host="0.0.0.0", port=PORT, debug=DEBUG)
 
     app.run()
